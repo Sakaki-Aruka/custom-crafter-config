@@ -1,0 +1,5 @@
+name: enchanted
+material: fishing_rod
+amount: 1
+enchants:
+  - lure,1,OnlyEnchant

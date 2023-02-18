@@ -1,0 +1,10 @@
+name: logs
+contents:
+  - oak_log
+  - spruce_log
+  - birch_log
+  - jungle_log
+  - dark_oak_log
+  - acacia_log
+  - crimson_stem
+  - warped_stem
