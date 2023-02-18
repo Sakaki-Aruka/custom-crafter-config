@@ -1,0 +1,7 @@
+name: iron-to-gold
+size: 4
+recipe:
+  - first,first,null,null
+  - null,null,null,null
+  - first,first,null,null
+  - null,null,first,first

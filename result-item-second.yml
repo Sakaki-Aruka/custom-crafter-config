@@ -1,0 +1,11 @@
+name: second
+material: gold_ingot
+amount: 10
+lore:
+  - line 1
+  - line 2
+enchants:
+  - mending,10
+  - luck,2
+flags:
+  - hide_dye

@@ -1,0 +1,7 @@
+name: stone-to-iron
+size: 3
+result: first
+recipe:
+  - second,second,second
+  - second,null,second
+  - second,second,second
