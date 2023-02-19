@@ -1,5 +1,5 @@
 name: iron-to-gold
-result: second
+result: 
 size: 4
 recipe:
   - first,first,null,null
