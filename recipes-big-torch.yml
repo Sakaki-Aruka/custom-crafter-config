@@ -1,0 +1,7 @@
+name: big-torch
+size: 3
+result: big-torch
+recipe:
+  - first,first,first
+  - logs,logs,logs
+  - logs,logs,logs
