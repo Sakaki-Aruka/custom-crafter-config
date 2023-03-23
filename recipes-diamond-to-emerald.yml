@@ -1,7 +1,0 @@
-name: diamond-to-emerald
-size: 3
-result: emerald
-recipe:
-  - null,third,null
-  - null,null,third
-  - third,third,third

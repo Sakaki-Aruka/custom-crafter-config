@@ -1,6 +1,0 @@
-amorphous: true #dummy
-name: amorphous-test
-enum: neighbor
-result: big-torch
-materials:
-  - second,3
