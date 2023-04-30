@@ -1,0 +1,11 @@
+name: regextest
+amount: 1
+nameOrRegex: "([a-zA-Z_]{1,20})_CONCRETE_POWDER@{R}_CONCRETE"
+matchPoint: 1
+metadata:
+  - "displayname,RESULT"
+  - "enchantment,luck,1"
+  - "enchantment,oxygen,5"
+  - "lore,first line"
+  - "lore,second line"
+  - "lore,third, line"

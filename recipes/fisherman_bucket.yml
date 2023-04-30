@@ -1,0 +1,6 @@
+name: fisherman_bucket
+tag: amorphous
+coordinate: [fish,bucket]
+result: fish_bucket
+returns: 
+  - water_bucket,bucket,1

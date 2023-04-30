@@ -1,0 +1,7 @@
+name: R3
+tag: normal
+result: first
+coordinate:
+  - second,second,second
+  - null,second,null
+  - second,second,second

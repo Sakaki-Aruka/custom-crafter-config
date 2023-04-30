@@ -1,0 +1,6 @@
+name: regex
+tag: amorphous
+coordinate: [bucket,third]
+result: regextest
+returns:
+  - water_bucket,bucket,1

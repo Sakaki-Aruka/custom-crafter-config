@@ -1,0 +1,6 @@
+name: custom_potion
+tag: normal
+result: custom_potion
+coordinate:
+  - obsidian,obsidian
+  - null,null

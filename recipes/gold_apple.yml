@@ -1,0 +1,9 @@
+name: gold_apple
+tag: normal
+result: enchanted_gold_apple
+override:
+  - apple -> a
+coordinate:
+ - gold_block,gold_block,gold_block
+ - gold_block,a,gold_block
+ - gold_block,gold_block,gold_block

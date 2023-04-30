@@ -1,0 +1,6 @@
+name: enchant
+amount: 1
+mass: false
+candidate: ["R|([a-zA-Z_]{1,20})_CONCRETE$"]
+enchant:
+ - "luck,1,strict"

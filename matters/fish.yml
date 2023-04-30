@@ -1,0 +1,4 @@
+name: fish
+amount: 1
+mass: false
+candidate: ["R|^(COD|SALMON|PUFFERFISH|TROPICAL_FISH)$"]

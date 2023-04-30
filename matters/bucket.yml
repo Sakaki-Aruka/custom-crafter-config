@@ -1,0 +1,5 @@
+name: bucket
+mass: true
+amount: 1
+candidate: [water_bucket]
+matchPoint: -1

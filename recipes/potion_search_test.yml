@@ -1,0 +1,12 @@
+name: potion_search_test
+result: custom_potion
+tag: normal
+override:
+  - potion_search_test -> p
+
+coordinate:
+  - p,p
+  - null,p
+
+returns:
+  - splash_potion,glass_bottle,1
