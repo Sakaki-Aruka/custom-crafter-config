@@ -1,4 +1,4 @@
-`# `config.yml`
+# `config.yml`
 ## baseBlock
 このセクションには、カスタムクラフターを開くために必要な基礎ブロックの情報を保持するファイルが存在するディレクトリのパスを書いてください。  
 
@@ -11,9 +11,9 @@
 対象のディレクトリが1つしか存在しない場合でもリスト形式で書いてください。  
  
 
-例) `results: [plugins/Custom_Crafter/results1,plugins/Custom_Crafter/results2]`
+例) `results: [plugins/Custom_Crafter/results1,plugins/Custom_Crafter/results2]`  
 例) 
-```
+```yaml
 results:
   - plugins/Custom_Crafter/results1
   - plugins/Custom_Crafter/results2
@@ -25,9 +25,9 @@ results:
 このセクションは必ずリスト形式で書いてください。  
 対象のディレクトリが1つしか存在しない場合でもリスト形式で書いてください。  
 
-例) `matters: [plugins/Custom_Crafter/matters1,plugins/Custom_Crafter/matters2]
+例) `matters: [plugins/Custom_Crafter/matters1,plugins/Custom_Crafter/matters2]`  
 例)
-```
+```yaml
 matters:
   - plugins/Custom_Crafter/matters1
   - plugins/Custom_Crafter/matters2
@@ -39,9 +39,9 @@ matters:
 このセクションは必ずディレクトリ形式で書いてください。  
 対象のディレクトリが1つしか存在しない場合でもリスト形式で書いてください。  
 
-例) `recipes: [plugins/Custom_Crafter/recipes1,plugins/Custom_Crafter/recipes2`
+例) `recipes: [plugins/Custom_Crafter/recipes1,plugins/Custom_Crafter/recipes2`  
 例)
-```
+```yaml
 recipes:
   - plugins/Custom_Crafter/recipes1
   - plugins/Custom_Crafter/recipes2
@@ -65,16 +65,18 @@ material: gold_block
 この名前は、バニラアイテムのID と重複しないように設定してください。  
 
 例) **NG** : `name: stone` -> 石のアイテムID と重複するので使用しないでください。  
-例) **OK** : `name: hard_stone`
+例) **OK** : `name: hard_stone`  
 
 また、独自の名前同士で重複することのないように設定してください。  
 もしも一つの名前を複数の素材で使用してしまった場合は、同名の素材のうち、最後に読み込まれた設定ファイルの内容が適用されます。ご注意ください。  
+
+__素材の名前に `null` を使用しないでください。`null` は予約語です。__
 
 ### 素材の要求量
 素材の要求量を `amount` セクションに書いてください。  
 1以上の整数を指定してください。(なお、1よりも大きい値を指定した場合、エラーなどが発生する場合があります)  
 
-例) **NG** : `amount: -1` -> 1以上の値を設定してください。
+例) **NG** : `amount: -1` -> 1以上の値を設定してください。  
 例) **OK** : `amount: 1`
 
 ### mass
@@ -102,13 +104,13 @@ candidate の設定を `candidate` セクションに書いてください。
 例) **NG** : `candidate: stone` -> 設定するアイテムIDが1つしかない場合でもリスト形式で書いてください。  
   
 
-例) **OK** : `candidate: [stone]`
+例) **OK** : `candidate: [stone]`  
 例) **OK** : `candidate: [stone,cobblestone]`
 
 また、このセクションでは正規表現を用いて複数のアイテムIDを指定することもできます。  
 正規表現を使用する場合は `R|` を正規表現の先頭に加えて記載してください。  
 
-例) `candidate: ["R|([a-zA-Z_]{1,20})_CONCRETE_POWDER"]`
+例) `candidate: ["R|([a-zA-Z_]{1,20})_CONCRETE_POWDER"]`  
 上記の正規表現は、各色のコンクリートパウダーを指定しています。  
 
 ---
@@ -142,9 +144,9 @@ enchant:
 
 ### potion
 素材に要求するポーション効果を設定することが出来ます。  
-:::note alert
-このセクションは candidate に `potion`, `splash_potion`, `lingering_potion` を設定しているとき以外は書かないでください。
-:::
+
+> このセクションは candidate に `potion`, `splash_potion`, `lingering_potion` を設定しているとき以外は書かないでください。
+
 
 要求するポーション効果、要求する効果時間、要求するレベル、要求する厳格性　の順に記載してください。
 
@@ -179,11 +181,11 @@ potion:
    
 `true` に設定すると素材に対して瓶の形の一致を要求します。
 `false` に設定すると素材に対して瓶の形の一致を要求しません。  
+  
+<br>
 
-:::note
-瓶の形の一致 : 普通のポーションであれば普通のポーションを、スプラッシュポーションであればスプラッシュポーションを、残留ポーションであれば残留ポーションというようなセットに対してのみ一致したとみなされること。
-:::
-
+> 瓶の形の一致 : 普通のポーションであれば普通のポーションを、スプラッシュポーションであればスプラッシュポーションを、残留ポーションであれば残留ポーションというようなセットに対してのみ一致したとみなされること。  
+  
 例) `bottleTypeMatch: true`
 
 
@@ -333,13 +335,18 @@ Recipe は4つの必須事項と2つのオプション設定を持ちます。
 `Tag` セクションにはレシピが定型か不定形かを記載してください。  
 `normal` と `amorphous` のどちらかのみを指定することが出来ます。  
 
-例) `tag: normal` -> 定型レシピであることを示す。
+例) `tag: normal` -> 定型レシピであることを示す。  
 例) `tag: amorphous` -> 不定形レシピであることを示す。
 
 ### result
 `result` セクションには成果物の名前を指定します。  
 
 例) `result: custom_item_result`  
+
+成果物の名前以外にも、バニラのアイテムIDをそのまま指定することでも成果物として扱うことが出来ます。  
+なお、バニラのアイテムIDを指定した場合、成果物は「個数1、メタデータ無し」となります。  
+
+例) `result: diamond`
 
 ### coordinate
 `coordinate` セクションにはアイテムの配置を指定します。  
