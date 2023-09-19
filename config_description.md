@@ -309,9 +309,12 @@ metadata:
   - "potionData,jump,200,10"
 ```  
 上記の例では、跳躍力上昇レベル10、効果時間10秒をポーションに設定します。  
-ポーション効果は [Spigot JavaDoc (PotionEffectType)](https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/potion/PotionEffectType.html) を参考に記載してください。  
+ポーション効果は [Spigot JavaDoc (PotionEffectType)](https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/potion/PotionEffectType.html) を参考に記載してください。 
 
-### potionColor
+
+---
+
+#### potionColor
 __この設定値は、`potionData` と同じく成果物のアイテムIDが `potion`, `splash_potion`, `lingering_potion` である場合のみ使用することが出来ます。__  
 
 `potionColor` では、ポーションの色を設定することが出来ます。  
@@ -320,6 +323,138 @@ RGB で表記し、 `r,g,b` の順に記載してください。
 metadata:
   - "potionColor,0,255,0"
 ```  
+
+---
+
+#### attribute_modifier
+`attribute_modifier` では、アイテムの属性を設定することが出来ます。  
+フォーマット 1
+```yaml
+metadata:
+  - attribute_modifier,type:属性/operation:操作/value:値
+```
+
+フォーマット 2
+```yaml
+metadata:
+  - attribute_modifier,type:属性/operation:操作/value:値/slot:適用スロット
+```
+
+属性、操作、値、適用スロットに使用することが出来る値については [AttributeModifier (Recipeのメタデータ)][recipe-attributemodifier] と共通なので、そちらを参照してください。
+
+---
+
+#### book_field
+`book_field` では、本の  
+- 作者
+- 世代
+- 本文　　
+
+を設定することが出来ます。  
+
+フォーマット  
+```yaml
+metadata: 
+  - book_field,type:操作タイプ/value:値
+```  
+
+操作タイプには  
+- author (作者名の設定)
+- title (タイトルの設定)
+- add_page (本の一番後ろのページに付け足す)
+- generation (本の世代の設定 -> 原本、コピー、コピーのコピー、ボロボロの本のどれか)
+- add_long (長い文章を自動でページ分割して記載する)
+- add_long_extend (外部ファイルから文字列を読み込んだ後に自動的にページ分割して記載する)
+
+のいずれかを指定してください。(カッコ内は各操作タイプの説明です。)
+
+generation の場合には以下の文字列のどれかを記載してください。
+- copy_of_copy
+- copy_of_original
+- original
+- tattered
+
+generation の技術的仕様や詳細は [BookMeta.Generation (Spigot JavaDoc)](https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/inventory/meta/BookMeta.Generation.html) を参照してください。
+
+例)
+```yaml
+metadata:
+  - book_field,type:generation/value:copy_of_copy
+```
+
+add_long_extend の場合には対象のファイルの絶対パスを記載することをお勧めします。
+例)
+```yaml
+metadata:
+  - book_field,type:add_long_extend/value:/home/aruka/example.txt
+```
+
+また、外部ファイルに保存されている文字列の長さが 25600 文字より長い場合は、 1 文字目から 25600 文字目までを本に記載します。  
+
+なお、 25600 文字は半角英数字を改行無しで書き込んだ場合の最大値であるため、全角文字や改行を使用する場合は適用可能な文字数が 25600 文字よりも短くなることに注意してください。  
+Unicode フォントの使用を強制している場合としていない場合においても表示可能な文字数に差が出ますのでご注意ください。  
+本プラグインは Unicode フォントの使用を前提として設計されています。実際に確認する際はその点に注意してください。   
+
+
+---
+
+#### leather_armor_color
+`leather_armor_color` では、革防具の色を設定することが出来ます。  
+
+フォーマット 1
+```yaml
+metadata:
+  - leather_armor_color,type:rgb/value:R->0,G->0,B->0
+```
+
+このフォーマットでは革防具の色を sRGB で指定することが出来ます。  
+R, G, B それぞれで設定することが出来る数値の範囲は `0 ~ 255` です。  
+各要素は整数値で指定する必要があります。  
+範囲外の数値を指定すると  
+- 0 未満の場合 : コンソールにエラー文が表示されます
+- 256 以上の場合 : 内部的に数値を 255 へ変更し適用されます  
+
+
+フォーマット 2
+```yaml
+metadata:
+  - leather_armor_color,type:name/value:aqua
+```
+
+このフォーマットでは革防具の色を色の名前で指定することが出来ます。  
+指定することが出来る色の一覧を下に示します。  
+- aqua
+- black
+- blue
+- fuchsia
+- gray
+- green
+- lime
+- maroon
+- navy
+- olive
+- orange
+- purple
+- red
+- silver
+- teal
+- white
+- yellow
+
+(fuchsia : フクシア、赤紫 -> R:213, G:128, B:178)  
+(teal : ティール、ターコイズ、青緑 -> R:0, G:128, B:128)  
+上に示した一覧に記載されていない色名を指定した場合、コンソールにエラー文が表示されます。  
+
+フォーマット3
+```yaml
+metadata:
+  - leather_armor_color,type:random
+```
+
+このフォーマットでは革防具の色をランダムで設定することが出来ます。  
+sRGB の各要素を 0 ~ 255 の範囲でランダムに決定し適用します。  
+
+---
 
 # Recipe
 Recipe は4つの必須事項と2つのオプション設定を持ちます。  
@@ -411,3 +546,149 @@ returns:
   - "water_bucket,bucket,1"
 ```  
 上記の例は、素材に含まれる水バケツ1つにつきバケツ1つを返却します。  
+
+---
+
+## using_container_values_metadata
+アイテムが持つデータコンテナから値を読み取り、アイテムの作成時に条件として使用したり、各種アイテムの値に適用することが出来ます。  
+基本的に `matter 名 <--> 操作の種類 -> 値`　というフォーマットに従ったうえ、リスト形式で記載します。  
+
+値にコンテナ内のデータを使用したい場合は `$コンテナ名` のフォーマットで記載してください。  
+
+アイテム名やアイテムの説明文にてコンテナに格納されたデータを使用したい場合には、対象の箇所に `{$コンテナ名}` という形で記載してください。  
+また、`{$コンテナ名}` という文字列を使用したい場合には、 `\{$コンテナ名}` のように中括弧の前にバックスラッシュを記載してください。
+
+なお、指定したコンテナが存在しない場合や中身が無い場合には `"None"` という文字列が指定箇所に挿入されます。
+
+負の数値を記載する際は、`-10` のように `-`(マイナス) を用いるのではなく、 `~`(チルダ) を用いてください。
+
+内部での処理に整数値を使用する箇所では、与えられたデータの丸め込みを行うことがあります。そのため、多少の誤差が表れる事があります。
+
+例) 
+```yaml
+using_container_values_metadata:
+  - matter_1 <--> using_container_values_lore -> This item contains \{$container_1} = {$container_1}
+```
+この例では、 `matter_1` という Matter から読みだした `$container_1` の値を `This item` から始まる文章の `{$container_1}` に代入します。  
+`{}` の中身がすべて数値型 (double, int) の場合にのみ、四則演算と累乗計算を `{}` の中で実行し、計算結果をその場所に代入することが出来ます。  
+
+演算の種類と記号
+- 足し算 : +
+- 引き算 : -
+- 掛け算 : *
+- 割り算 : /
+- 累乗 : ^
+
+※演算の例  
+```yaml
+- matter_1 <--> using_container_values_lore -> Value -> {$container_1 + $container_2 - $container_3 * $container_4 / $container_5 % $container_6}
+```
+各種演算を行う場合は、コンテナの値と演算子の間に半角スペースを挿入してください。  
+
+### lore
+このタイプは、アイテムの説明文を操作する際に使用します。  
+
+フォーマット
+```yaml
+- matter名 <--> using_container_values_lore -> 説明文
+```
+
+説明文には半角英数字、全角文字を使用することが出来ます。  
+また、`§` を用いた文字装飾を適用することもできます。  
+
+### enchantment
+このタイプは、アイテムのエンチャントを操作する際に使用します。  
+
+フォーマット 1
+```yaml
+- matter名 <--> using_container_values_enchantment -> enchantment:エンチャント種別/level:エンチャントレベル
+```
+
+フォーマット 2
+```yaml
+- matter名 <--> using_container_values_enchantment -> enchantment:$コンテナ名/level:$コンテナ名
+```
+
+フォーマット 2 のようにエンチャント種別、レベルの両方、もしくはそれら片方のみにコンテナデータを使用することが出来ます。
+
+### potion_color
+このタイプは、ポーションの色を操作する際に使用します。  
+指定方法には RGB, random の 2 種類があります。
+
+フォーマット 1
+```yaml
+- matter名 <--> using_container_values_potion_color -> type:rgb/value:R->Red値,G->Green値,B->Blue値
+```
+Red, Green, Blue の各値には `0 ~ 255` の整数、または数値型のデータを持つコンテナ名を記載し適用することが出来ます。  
+
+フォーマット2
+```yaml
+- matter 名 <--> using_container_values_potion_color -> type:random
+```
+フォーマット 2 を記載したとき、RGB の各要素の値を `0 ~ 255` の範囲からランダムで決定し、適用します。  
+
+### tool_durability
+このタイプは、アイテムの耐久値を操作する際に使用します。  
+耐久値を操作することが出来ない Matter を対象にこの操作を記述した場合は、エラーを出して終了します。  
+
+フォーマット 1
+```yaml
+- matter名 <--> using_container_values_tool_durability -> type:absolute/value:耐久値
+```
+耐久値の部分には、0 より大きく、対象の Matter の最大耐久値以下の整数、もしくは数値型のデータが格納されたコンテナ名を記載し適用することが出来ます。  
+指定した値が成果物の残り耐久値になります。
+
+フォーマット 2
+```yaml
+- matter名 <--> using_container_values_tool_durability -> type:percentage/valeu:残り耐久パーセンテージ
+```
+
+残り耐久パーセンテージの部分には 0 ~ 100 の整数値、または数値型のデータが格納されたコンテナ名を記載し適用することが出来ます。  
+`成果物の新品状態の耐久値 * 指定したパーセンテージ / 100` を整数に丸めた値が、成果物の残り耐久値になります。
+
+### itme_name
+このタイプは、アイテムの名前を操作する際に使用します。  
+
+フォーマット
+```yaml
+- matter名 <--> using_container_values_item_name -> アイテム名
+```
+アイテム名の箇所には `{$コンテナ名}` のフォーマットを用いてコンテナデータを挿入することもできます。
+
+### attribute_modifier
+[recipe-attributemodifier]: ###attribute_modifier
+このタイプは、アイテムの属性を設定する際に使用します。
+
+フォーマット 1
+```yaml
+- matter名 <--> using_container_values_attribute_modifier -> type:属性/operation:操作/value:値
+```
+
+属性には設定したい属性、操作には `add`, `multiply`, `add_scalar` のいずれか、値には数値型のデータを持つコンテナ名か、実数を入力して適用することが出来ます。  
+
+なお、このフォーマットで属性を指定した場合には後述する適用スロットの設定は行われず、どの部位に装着した場合でも効果を発揮するようになります。
+
+フォーマット 2
+```yaml
+- matter名 <--> using_container_values_attribute_modifier -> type:属性/operation:操作/value:値/slot:適用スロット
+```
+適用スロットには、
+- CHEST
+- FEET
+- HAND
+- HEAD
+- LEGS
+- OFF_HAND  
+
+のいずれかを指定してください。  
+スロットを指定すると、指定した部位にアイテムを装着した場合のみ属性の効果が適用されるようになります。  
+
+属性、操作、適用スロットの技術的仕様や使用可能な値については
+- 属性 : [Attribute (Spigot JavaDoc)](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/attribute/Attribute.html)
+- 操作 : [AttributeModifier.Operation (Spigot JavaDoc)](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/attribute/AttributeModifier.Operation.html)
+- 適用スロット : [EquipmentSlot (Spigot JavaDoc)](https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/inventory/EquipmentSlot.html)
+
+を参照してください。
+
+属性によって指定可能な `value` の範囲は異なるため注意してください。  
+参考 : [MinecraftWiki 属性 (Attribute)](https://minecraft.fandom.com/ja/wiki/%E5%B1%9E%E6%80%A7)
