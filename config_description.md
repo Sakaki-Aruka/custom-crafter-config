@@ -39,7 +39,7 @@ matters:
 このセクションは必ずディレクトリ形式で書いてください。  
 対象のディレクトリが1つしか存在しない場合でもリスト形式で書いてください。  
 
-例) `recipes: [plugins/Custom_Crafter/recipes1,plugins/Custom_Crafter/recipes2`  
+例) `recipes: [plugins/Custom_Crafter/recipes1,plugins/Custom_Crafter/recipes2]`  
 例)
 ```yaml
 recipes:
