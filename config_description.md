@@ -193,7 +193,7 @@ potion:
 成果物の設定ファイルには必ず設定しなくてはいけない項目4つと、オプション設定2つがあります。  
 
 ## 必須設定
-### 成果物の名前
+### name
 成果物の名前は `name` セクションに記載してください。  
 レシピを作成する際に使用します。  
 バニラアイテムのIDと異なる必要があり、加えて、他の成果物と重複することがあってはいけません。  
@@ -201,7 +201,7 @@ potion:
 
 例) `name: genetically_modified_crop`
 
-### 成果物の個数
+### amount
 成果物の個数は `amount` セクションに記載してください。  
 1以上の整数を記載してください。  
 
@@ -215,10 +215,17 @@ potion:
 
 ### nameOrRegex
 成果物のアイテムIDは `nameOrRegex` セクションに記載してください。  
-このセクションではアイテムIDを直接指定するか、もしくは正規表現を用いて素材のアイテムIDから文字列を切り出してアイテムIDを作成する方法のどちらかを使用することが出来ます。  
+このセクションでは
+- アイテムID を直接指定する
+- 正規表現を用いて素材のアイテムIDから文字列を切り出して新たなアイテムID を指定する
+- パススルーモードを指定する
+
+のいずれかの方法で成果物のアイテムを指定することが出来ます。  
 正規表現を使用しない場合は、[Spigot JavaDoc (Material)](https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html) を参考にアイテムIDを記載してください。  
 
 例) `nameOrRegex: stone`  
+
+---
 
 正規表現を使用し、素材のアイテムIDから成果物のアイテムIDを作成し適用する場合は  
 `素材のアイテムIDに使用する正規表現@成果物のアイテムIDを作成する文字列`  
@@ -231,6 +238,50 @@ potion:
 `WHITE_CONCRETE_POWDER` より切り出された `WHITE` を `{R}` の箇所に挿入するため `WHITE_CONCRETE` となります。  
 
 マッチ箇所は1か所のみ設けることが出来ます。複数のマッチ箇所を設けることはできません。  
+
+---
+
+パススルーモードを設定するには、  
+`pass -> パススルーしたいアイテムID`  
+のフォーマットで記載をしてください。  
+パススルーモードを使用する場合は Recipe ファイルとの連携が不可欠になるため、Result ファイルの使いまわしは控えることを推奨します。  
+また、パススルーしたいアイテム ID の部分に Matter の名前を指定することはできません。  
+必ずマインクラフト内に存在するアイテムのアイテム ID に設定してください。
+
+**パススルーするアイテムは、1つしか要求されない素材にしてください。**  
+(複数個要求されるアイテムに指定するとエラーになります)
+
+パススルーモードではパススルーするアイテムに様々な装飾を施すことが出来ます。  
+それらの装飾が必要ではなく、単にレシピ中で使用したアイテムを返却したい場合は Recipe ファイルの `returns` セクションを利用することを推奨します。  
+(アイテムに装飾を施さない場合、Recipe ファイルと連携するためにファイル構成がより複雑になり、レシピ管理の負担が増す恐れがあります。)
+
+例)
+```yaml
+# リザルトファイル
+name: pass_through_test_1
+amount: 1
+matchPoint: -1
+nameOrRegex: pass -> diamond_helmet
+metadata:
+  - pass_through,mode=pass/type=enchant/action=add/value=enchant=durability,level=5
+  - pass_through,mode=pass/type=lore/action=add/value=An enchant is added!
+
+# レシピファイル
+name: recipe
+tag: normal
+result: pass_through_test_1
+override:
+  - null -> n
+  - diamond_helmet -> h
+  - diamond -> d
+coordinate: 
+  - d,d
+  - n,h
+
+```  
+
+これらをリザルトファイルとレシピファイルに分割し、適用すると配置したダイヤモンドの頭防具に `耐久5` のエンチャントと `An enchant is added!` という説明文が追加されて返却されます。  
+
 
 ## オプション設定
 ### 成果物に付与するエンチャント
@@ -558,8 +609,133 @@ container:
 例) 
 ```yaml
 (multi)(types:string*2,double*2,int*2) a,b,c,d,e
-# このように指定した場合、a は string 型、 b と c は double 型、 d と e は int 型として扱われます。
+# このように指定した場合、
+
+# a は string 型
+# b, c は double 型
+# d, e は int 型
+
+#として扱われます。
 ```
+
+### パススルー用メタデータ
+パススルーモード用のメタデータは  
+`pass_through,mode=pass/type=([\w\d-_]+)/action=([\w\d-_]+)/value=(.+)`  
+という正規表現パターンに従う必要があります。  
+#### enchant
+パススルーするアイテムからエンチャントを
+- 追加
+- 削除
+
+することが出来ます。  
+エンチャントを追加する際はレベルも設定してください。  
+
+`value` に使用される正規表現  
+追加: `enchant=([\w_]+),level=([\d]+)`  
+削除: `([\w]+))`  
+
+例) 追加  
+```yaml
+metadata:
+  - pass_through,mode=pass/type=enchant/action=add/value=enchant=durability,level=10
+```  
+パススルーするアイテムに `耐久エンチャント レベル10` を付与します。
+
+例) 削除  
+```yaml
+metadata:
+  - pass_through,mode=pass/type=enchant/action=remove/value=durability
+```  
+パススルーするアイテムから `耐久エンチャント` を削除します。
+
+#### enchant_level
+パススルーするアイテムが持つエンチャントのレベルを変更することが出来ます。  
+計算の結果が  
+- 1 未満になるような場合は 1 に
+- 256 以上いなるような場合は 255 に  
+
+設定します。
+
+`value` に使用される正規表現  
+`enchant=([\w_]+),change=([\d]+)`  
+
+例) 減算  
+```yaml
+metdata:
+  - pass_through,mode=pass/type=enchant_level/action=minus/value=enchant=durability,change=10
+```  
+パススルーするアイテムが持つ `耐久エンチャント` の現在のレベルから 10 レベル分減算します。  
+
+例) 加算  
+```yaml
+metadata:
+  - pass_through,mode=pass/type=enchant_level/action=plus/value=enchant=durability,change=10
+```  
+パススルーするアイテムが持つ `耐久エンチャント` の現在のレベルに 10 レベル分加算します。  
+
+#### lore
+パススルーするアイテムが持つ説明文を  
+- クリア(全て削除)
+- 追加 
+- 行を指定して追加
+
+することが出来ます。  
+
+`value` に使用される正規表現。  
+クリア: `null`  
+追加: `(.+)`  
+行を指定して追加: `line=([\d]+),lore=(.+)`  
+
+例) クリア  
+```yaml
+metadata:
+  - pass_through,mode=pass/type=lore/action=clear/value=null
+```  
+パススルーするアイテムが持つアイテム説明文をすべて削除します。  
+
+例) 追加
+```yaml
+metadata:
+  - pass_through,mode=pass/type=lore/action=add/value=TEST ADD!!
+```  
+パススルーするアイテムの説明文に `TEST ADD!!` を追加します。  
+
+例) 行を指定して追加  
+```yaml
+metadata:
+  - pass_through,mode=pass/type=lore/action=modify/value=line=3,lore=TEST ADD!!
+```  
+パススルーするアイテムの説明文の 3 行目に `TEST ADD!!` を追加します。  
+アイテムの説明文の行数よりも大きい数字を指定した場合は、文字列が追加されることはありません。  
+
+#### container_modify
+
+#### durability
+パススルーするアイテムの耐久値を  
+- 加算(回復)
+- 減算  
+
+することが出来ます。  
+
+`value` に使用される正規表現  
+`([\d]+)`
+
+例) 加算  
+```yaml
+metadata:
+  - pass_through,mode=pass/type=durability/action=plus/value=100
+```  
+パススルーするアイテムの耐久値を 100 だけ回復します。  
+`現在のアイテムの耐久値 + 回復量` がアイテムの耐久値の最大値よりも大きくなった場合は、耐久の最大値で加算はストップします。  
+
+例) 減算  
+```yaml
+metadata: 
+  - pass_through,mode=pass/type=durability/action=minus/value=100
+```  
+パススルーするアイテムの耐久値を 100 だけ削ります。  
+`現在のアイテムの耐久値 - 減算量` が 1 未満になった場合には、残り耐久値を 1 にします。  
+
 
 # Recipe
 Recipe は4つの必須事項と2つのオプション設定を持ちます。  
