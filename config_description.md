@@ -60,7 +60,7 @@ material: gold_block
 # Matters
 素材の設定ファイルには、必ず記載しなくてはならない項目が4つとオプション設定が2つ存在します。  
 ## 必須項目
-### 素材の名前
+### name
 素材の名前を `name` セクションに書いてください。  
 この名前は、バニラアイテムのID と重複しないように設定してください。  
 
@@ -72,7 +72,7 @@ material: gold_block
 
 __素材の名前に `null` を使用しないでください。`null` は予約語です。__
 
-### 素材の要求量
+### amount
 素材の要求量を `amount` セクションに書いてください。  
 1以上の整数を指定してください。(なお、1よりも大きい値を指定した場合、エラーなどが発生する場合があります)  
 
@@ -124,7 +124,7 @@ candidate の設定を `candidate` セクションに書いてください。
 
 要求するエンチャント名、要求するレベル、要求する厳格性　の順番で設定します。  
 #### エンチャント名
-エンチャント名は[Spigot JavaDoc (Enchantment)](https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/enchantments/Enchantment.html)を参考に記載してください。  
+エンチャント名は各エンチャントに割り振られている内部 ID を利用してください。
 #### 要求するレベル
 1以上の整数で入力してください。  
 #### 要求する厳格性
@@ -193,7 +193,57 @@ potion:
 ---
 
 ### Container
+下記の正規表現に従ってください。
+```
+- predicate: ((allow|deny)_(value|tag)|string_match)
+  formula: (.+)
+```
 
+predicate には
+- allow_tag : formula に列挙したタグが**含まれている**場合にのみアイテムのクラフトを続行する
+- deny_tag : formula に列挙したタグが**含まれていない**場合にのみアイテムのクラフトを続行する
+- allow_value : formula に記載した式が**成立する**場合にのみアイテムのクラフトを続行する
+- deny_value : formula に記載した式が**成立しない**場合にのみアイテムのクラフトを続行する
+- string_match : formula に式と正規表現を記載し、式の内容が正規表現にマッチした場合にのみアイテムのクラフトを続行する
+
+のいずれかを選んで記載してください。  
+formula では `%` で囲んだ文字列を変数名として扱い、素材となるアイテムのコンテナに対象の変数が存在する場合にのみ式に代入されます。  
+対象の変数が存在しない場合には、`None` という文字列が代入されます。
+また、計算が必要な箇所では `{}` を用いることによってそれらで囲まれた部分を式とした際の計算結果を代入します。  
+計算に使用することが出来る演算子は `+`, `-`, `*`, `/`, `%`(剰余), `^`(べき乗) の 6 つです。  
+剰余の演算子を用いる場合には、変数として扱われることのないように `\`(バックスラッシュ) を直前においてください。   
+計算結果の比較に使用することが出来る演算子は `<`, `>`, `<=`, `>=`, `==`, `!=`, `&&`, `||`, `!` の 9 つです。  
+また、これらの計算では `()` を用いて計算順序の制限や評価の重ね合わせを行うことが出来ます。   
+
+(条件の例)
+```yaml
+# test_1.string = Hello, world
+# test_2.long = 100
+# test_3.long = 25
+container:
+- predicate: allow_tag
+  formula: test_1.string
+
+- predicate: allow_tag
+  formula: test_2.*
+
+- predicate: allow_value
+  formula: {%test_2.long%  * %test_3.long% = 2500}
+
+- predicate: string_match
+  formula: 2:(?i)hello, world,%test_1.string%
+
+- predicate: allow_value
+  formula: {(%test_2.long% == 100) && (%test_3.long% == 25)}
+```
+
+- (allow|deny)_tag の場合、`*` を使用することによって対象とする変数名の型を無視して変数名のみで指定することが出来ます。
+- (allow|deny)_value の場合は、formula の内容を真偽値で表現することが出来るようにしてください。
+- string_match の場合、`(\\d+):(.+)` で示されるルールに従う必要があります。
+  - 最初の `(\\d+)` というパターンは、正規表現と代入された文字列の区切りをであるカンマのインデックスを示します。上記の例であれば、2 つめのカンマが文字列と正規表現の区切りであることを示しています。
+  - コロンを挟んで右側の `(.+)` は正規表現と代入された文字列を記載する場であることを示します。
+  - 指定されたインデックスのコロンの左側を正規表現、右側を実際の文字列として扱います。
+- 型 `long` を用いる場合においても内部での演算では `double` が用いられるため、商や積が `.0` のような形で表されることがあります。(long にキャストすることが出来る機能を作成中です) 
 
 --
 
@@ -301,7 +351,6 @@ enchant:
   - mending,1
 ```  
 上記の例では、修繕のレベル1エンチャントを成果物に付与しています。  
-エンチャント名は [Spigot JavaDoc (Enchantment)](https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/enchantments/Enchantment.html) を参考にして記載してください。  
 
 
 ---
@@ -399,3 +448,153 @@ returns:
 
 ---
 
+### container
+このセクションでは成果物に対して様々なデータを設定することが出来ます。  
+
+以下の正規表現に従ってください。  
+```yaml
+-
+  predicate: (none|string|value)
+  formula: (.+) # predicate: none の場合は不要
+  type: # 記載可能な値については後述
+  value: (.+)
+```
+
+- predicate: 
+  - none: `type`, `value` に記載された操作を毎回実行します。
+  - string: `Matter` の `StringMatch` と同じように判定を行います。
+  - value: `Matter` の `allow_value` と同じように判定を行います。
+
+- formula: 
+  - `predicate: none` を設定している場合にはこのセクションを書く必要はありません。
+  - その他の場合においては `predicate` に設定した値に沿った内容を記載してください。
+
+- type:  
+  - lore: 成果物の説明欄へ `value` に記載した内容を追加します。
+  - enchant: 成果物へエンチャントを追加します。
+  - potion_color_rgb: ポーションの色を RGB で指定します。
+  - potion_color_name: ポーションの色を色の名前で指定します。
+  - potion_effect: ポーションの種類、レベル、効果時間を設定します。
+  - texture_id: 指定した番号を持つリソースパックのテクスチャを成果物に適用します。
+  - tool_durability_percentage: 成果物の残り耐久値をパーセンテージで指定します。
+  - tool_durability_real: 成果物の残り耐久値を実際の値で指定します。
+  - item_name: 成果物の名前を設定します。
+  - attribute_modifier: 属性を設定します。
+  - attribute_modifier_equipment: 特定部位に装備した際の属性を設定します。
+  - item_flag: アイテムフラグを設定します。
+  - unbreakable: 無限の耐久を設定します。
+  - leather_armor_color: 皮防具の色を設定します。
+  - book: 本の中身、著者、世代、タイトルの設定をします。
+  - enchant_modify: 成果物のエンチャント内容を変更します。
+  - lore_modify: 成果物の説明文の内容を変更します。
+  - attribute_modifier_modify: 成果物の属性の内容を変更します。
+  - result_sync: 設定に使用するデータの更新を行います。(**成果物に変化なし**)
+  - container: 成果物のコンテナの設定を行います。
+  - head: 成果物がプレイヤーヘッドである場合にのみ、その内容についての設定を行います。
+  - material: 成果物のアイテム種別を設定します。
+  - run_command_as_player: アイテムを作成しているプレイヤーとして実行するコマンドの設定をします。(**成果物に変化なし**)
+  - run_command_as_console: サーバーコンソールとして実行するコマンドの設定をします。(**成果物に変化なし**)
+
+- value: 
+  - `type` に指定した値によって従うべき正規表現パターンが異なります。
+    - enchant: `enchant=([a-zA-Z]+),level=([0-9]+)`
+      - enchant: エンチャント名 (ゲーム内 ID)
+      - level: エンチャントレベル( 1 ~ 255)
+    - potion_color_rgb: `red=([0-9]+),green=([0-9]+),blue=([0-9]+)`
+    - potion_color_name: `(.+)`
+    - texture_id: `([-0-9]+)`
+    - tool_durability_percentag: `([0-9]*)\.?([0-9]+)`
+    - tool_durability_real: `([0-9]+)`
+    - item_name: `(.*)`
+    - attribute_modifier: `attribute=([a-zA-Z_]+),op=(?i)(add_number|add_scalar|multiply_scalar_1),value=(-?[0-9]*\.?[0-9]+)`
+      - attribute: 属性の種別
+      - op: 操作の種類
+      - value: 値
+    - attribute_modifier_equipment: `attribute=([a-zA-Z_]+),op=(?i)(add_number|add_scalar|multiply_scalar_1),value=(-?[0-9]*\.?[0-9]+),slot=([a-zA-Z_]+)`
+      - slot: アイテムを装備した時に効果を発揮するスロット
+    - item_flag: `flag=([a-zA-Z_]+),action=(?i)(clear|remove|add)`
+      - flag: アイテムフラグの種類
+      - action: 操作種別
+    - unbreakable: `(true|false)`
+    - potion_effect: `effect=([a-zA-Z_]+),level=([0-9]+),duration=([0-9]+)`
+      - effect: ポーションの種類 ([このページ](https://jd.papermc.io/folia/1.20/org/bukkit/potion/PotionEffectType.html)をご覧ください)
+      - level: ポーションのレベル
+      - duration: ポーションの持続時間 (秒数 × 20)
+    - leather_armor_color (RGB 指定の場合): `r=([0-9]+),g=([0-9]+),b=([0-9]+)`
+      - 特殊値 `$CURRENT_(RED|GREEN|BLUE|RGB)$` を使用することが出来る。(それぞれ現在設定されている色の値)
+      - r: RGB の red
+      - g: RGB の green
+      - b: RGB の blue
+    - leather_armor_color (色名指定の場合): `([a-zA-Z_]+)`
+    - leather_armor_color (ランダムの場合): `(?i)(random)`
+    - book: `"type=(author|title|add_page|add_long|from_file|gen),element=(.+)`
+      - type:
+        - author: `element` の内容を著者に設定する
+        - title: `element` の内容をタイトルを設定する
+        - add_page: `element` の内容を新しいページとして追加する
+        - add_long: `element` の内容を自動で複数ページに分割し追加する
+        - from_file: `element` に指定されたパスに存在するファイルの中身を読みこみ、中身を自動で複数ページに分割し追加する (上限は 25600 文字, または 100 ページの小さい方)
+        - gen: `element` から本の世代を設定する
+    - head: `type=(name|url),value=(.+)`
+      - type:
+        - name: 実在するプレイヤーの名前から頭のスキンを決定する
+        - url: [Minecraft-Heads.com](https://minecraft-heads.com/custom-heads) などに存在するスキンから決定する
+      - value:
+        - `type: name` のとき: プレイヤー名
+        - `type: url` のとき: Base64 エンコードされた `{"textures":{"SKIN":{"url":"テクスチャの URL"}}}` の形式で記述された文字列 (Minecraft-Heads.com では for Developers セクションの Value に該当) 
+    - enchant_modify: `type=(enchant|level),action=([a-zA-Z_]+)->([{}+\-*/\\^%$a-zA-Z0-9_]+)`
+      - type: 
+        - enchant: エンチャントの種類を変更する
+        - level: エンチャントレベルを変更する
+      - action: `変更前の値->変更後の値` の形式
+      - `$CURRENT_LEVEL$` を用いて指定したエンチャントの現在のレベルを取得することが可能
+    - lore_modify: `type=(clear|modify)(,value=type=(remove|insert),line=([0-9]+)(,value=(.+))*)?`
+      - type:
+        - clear: 説明文をすべて削除する (`type: clear` のとき、`value` は必要ない)
+        - modify: `value` に従って説明文を編集する
+      - value: `=type=(remove|insert),line=([0-9]+)(,value=(.+))*)?` に従う
+        - remove: 指定した行を削除する
+        - insert: 指定した行に `value` を挿入する
+    - attribute_modifier_modify: `type=(clear|remove|modify)(,attribute=([a-zA-Z_]+)(,value=(.+))?)?`
+      - type:
+        - clear: 属性を**全て**削除
+        - remove: `attribute` で指定した属性のみを削除
+        - modify: `attribute` で指定した属性を `value` に従い編集
+      - attribute: 属性
+      - value:
+        - `type=modify` の場合にのみ必要
+        - 内容は `attribute_modifier` 及び `attribute_modifier_equipment` の正規表現に従う
+    - result_sync: `.*`
+    - container: `type=(add|remove|modify),target=([a-zA-Z0-9_.%$]*)(,value=(.+))?`
+      - type:
+        - add: 変数名を `target` から、値を `value` からそれぞれ取得し変数を作成して成果物のコンテナに加える
+        - remove: `target` に指定された変数を成果物のコンテナから削除する
+        - modify: 成果物のコンテナに既に値が存在している場合でも `add` の振る舞いをする
+      - value: `$CURRENT_VALUES$` を用いて `target` から取得した変数名の現在の値を使用することが可能 (.anchor は常に空文字列を返す)
+    - material: `[a-zA-Z_]+`
+    - run_command_as_player: `.+`
+    - run_command_as_console: `.+`
+  - プレースホルダを用いて素材が保持していたデータを使用することが出来ます。
+    - 上記の正規表現パターンはプレースホルダの値を代入した後の時点での文字列が従わなければならないパターンを示しています。
+  - `$result.` を変数名の前に付けることで成果物がその時点で持つデータを使用することが出来ます。(前回 `result_sync` を行った時点のデータ)
+  - `$PLAYER_([a-zA-Z_]+)$` のパターンに従う、プレイヤーに関する特殊な値を使用することが可能。
+    - `$PLAYER_UUID$`: クラフトしているプレイヤーの UUID (String)
+    - `$PLAYER_NAME$`: クラフトしているプレイヤーの名前 (String)
+    - `$PLAYER_CURRENT_WORLD$`: クラフトしているプレイヤーが存在するワールドの名前 (String)
+    - `$PLAYER_CURRENT_X$`: クラフトしているプレイヤーの X 座標 (double)
+    - `$PLAYER_CURRENT_Y$`: クラフトしているプレイヤーの Y 座標 (double)
+    - `$PLAYER_CURRENT_Z$`: クラフトしているプレイヤーの Z 座標 (double)
+    - `$PLAYER_CURRENT_Xi$`: クラフトしているプレイヤーの X 座標を小数点以下切り捨てした値 (int)
+    - `$PLAYER_CURRENT_Yi$`: クラフトしているプレイヤーの Y 座標を小数点以下切り捨てした値 (int)
+    - `$PLAYER_CURRENT_Zi$`: クラフトしているプレイヤーの Z 座標を小数点以下切り捨てした値 (int)
+    - `$PLAYER_CURRENT_PITCH$`: クラフトしているプレイヤーのピッチ (float)
+    - `$PLAYER_CURRENT_YAW$`: クラフトしているプレイヤーのヨー (float)
+    - `$PLAYER_IN_WATER$`: クラフトしているプレイヤーが水に入っているか (bool)
+    - `$PLAYER_CURRENT_FOOD_LEVEL$`: クラフトしているプレイヤーの満腹度 (int)
+    - `$PLAYER_PING$`: クラフトしているプレイヤーの PING 値 (int)
+    - `$PLAYER_EXP$`: クラフトしているプレイヤーの経験値量 (float)
+    - `$PLAYER_EXP_LEVEL$`: クラフトしているプレイヤーの経験値レベル (int)
+    - `$PLAYER_DISPLAYED_NAME$`: クラフトしているプレイヤーのゲーム内での表示名 (String)
+    - `$PLAYER_MAXIMUM_NO_DAMAGE_TIKCS$`: クラフトしているプレイヤーがダメージを受けずに経過したゲーム内チックの最大値 (int)
+
+  - その処理特有の特殊な値、数値型のデータであるときのみ使用することが出来る特殊な値を呼び出して使用することもできます。
