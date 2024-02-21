@@ -494,6 +494,7 @@ returns:
   - material: 成果物のアイテム種別を設定します。
   - run_command_as_player: アイテムを作成しているプレイヤーとして実行するコマンドの設定をします。(**成果物に変化なし**)
   - run_command_as_console: サーバーコンソールとして実行するコマンドの設定をします。(**成果物に変化なし**)
+  - amount: 成果物の個数を変更する
 
 - value: 
   - `type` に指定した値によって従うべき正規表現パターンが異なります。
@@ -574,6 +575,9 @@ returns:
     - material: `[a-zA-Z_]+`
     - run_command_as_player: `.+`
     - run_command_as_console: `.+`
+    - amount: `limit=(true|false),amount=([0-9]{1,4})`
+      - limit: 成果物のマテリアルの１スロットにおける最大個数の制限を受け入れるか否か
+      - amount: 成果物の個数
   - プレースホルダを用いて素材が保持していたデータを使用することが出来ます。
     - 上記の正規表現パターンはプレースホルダの値を代入した後の時点での文字列が従わなければならないパターンを示しています。
   - `$result.` を変数名の前に付けることで成果物がその時点で持つデータを使用することが出来ます。(前回 `result_sync` を行った時点のデータ)
@@ -596,5 +600,14 @@ returns:
     - `$PLAYER_EXP_LEVEL$`: クラフトしているプレイヤーの経験値レベル (int)
     - `$PLAYER_DISPLAYED_NAME$`: クラフトしているプレイヤーのゲーム内での表示名 (String)
     - `$PLAYER_MAXIMUM_NO_DAMAGE_TIKCS$`: クラフトしているプレイヤーがダメージを受けずに経過したゲーム内チックの最大値 (int)
+    - `$PLAYER_CLIENT_BRAND_NAME$`: プレイヤーが使用しているゲームクライアントの名前 (String)
+    - `$PLAYER_IS_FLYING$`: プレイヤーが飛行しているか (bool)
+    - `$PLAYER_CURRENT_GAME_MODE$`: クラフトしているプレイヤーのゲームモード (String)
+    - `$PLAYER_IN_RAIN$`: クラフトしているプレイヤーが雨に打たれているか (bool)
+    - `$PLAYER_IN_LAVA$`: クラフトしているプレイヤーがマグマの中にいるか (bool)
+    - `$PLAYER_FACING$`: クラフトしているプレイヤーが向いている方角 (String)
+    - `$PLAYER_CURRENT_HEALTH$`: クラフトしているプレイヤーの体力 (double)
+    - `$RESULT_MATERIAL$`: 成果物のマテリアル名 (String)
+    - `$RESULT_AMOUNT$`: 成果物の個数
 
   - その処理特有の特殊な値、数値型のデータであるときのみ使用することが出来る特殊な値を呼び出して使用することもできます。
