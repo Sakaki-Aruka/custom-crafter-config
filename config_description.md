@@ -1,4 +1,4 @@
-# `config.yml`
+# config.yml
 ## baseBlock
 このセクションには、カスタムクラフターを開くために必要な基礎ブロックの情報を保持するファイルが存在するディレクトリのパスを書いてください。  
 
@@ -39,7 +39,7 @@ matters:
 このセクションは必ずディレクトリ形式で書いてください。  
 対象のディレクトリが1つしか存在しない場合でもリスト形式で書いてください。  
 
-例) `recipes: [plugins/Custom_Crafter/recipes1,plugins/Custom_Crafter/recipes2]`  
+例) `recipes: [plugins/Custom_Crafter/recipes1,plugins/Custom_Crafter/recipes2]]`  
 例)
 ```yaml
 recipes:
@@ -142,6 +142,8 @@ enchant:
 
 `NotStrict`, `OnlyEnchant` を設定する場合はレベルを適当な値に設定してください。
 
+---
+
 ### potion
 素材に要求するポーション効果を設定することが出来ます。  
 
@@ -188,12 +190,129 @@ potion:
   
 例) `bottleTypeMatch: true`
 
+---
+
+### Container
+素材が特定のコンテナデータを持ってい(る/ない)ときにのみアイテムの作成を許可します。
+
+フォーマット  
+```
+terms:
+  "順番_1":
+    tag: タグ
+    order: 順番_2
+    key: キー名
+    type: 型名
+    value: 条件
+```
+順番: ここには 0 から順に数字を当てはめていってください。なお、 `順番_1` と `順番_2` に入る数字は同じでなくてはいけません。  
+タグ: ここには要求するコンテナデータをどのように活用するかを示すタグを指定してください。以下にタグとその内容を示します。  
+```
+# tag overview
+allow_tag
+# このタグを指定した場合は、キー名に記載したキーがコンテナデータに含まれている場合にアイテムの作成を許可します。
+# キー名のみを判定の基準とするため、どのようなデータが格納されていようがアイテムの作成を許可します。
+
+deny_tag
+# このタグを指定した場合は、キー名に記載したキーがコンテナデータに含まれていない場合にアイテム作成を許可します。
+# 対応するキーがデータを持っていない場合でも、キーが存在している場合はアイテム作成に失敗します。
+
+allow_value
+# このタグを指定し、value に記載されている条件を満たす場合にアイテムの作成を許可します。
+# コンテナがこのキーを含まない場合、もしくはキーが存在しているがデータが条件に合致しない場合はアイテム作成に失敗します。
+
+deny_value
+# このタグを指定し、 value に記載されている条件を満たさない場合にアイテムの作成を許可します。
+# コンテナがこのキーを含んでおり、データが条件に合致する場合にのみアイテムの作成に失敗します。
+# コンテナがこのキーを含んでいるが、データが条件に合致しない場合はアイテムの作成を許可します。
+```
+
+キー名: 判定の対象となるデータの名前  
+型名: `int`, `double`, `string` の中から適切なものを選んで適用してください。  
+条件: データをチェックする条件。以下に使用することが出来る書式を示します。  
+
+```
+# 基本的に判定されるデータの名前は記載しません。
+# 判定に使用する値、もしくはコンテナ値のみ記載します。
+# 以下に示す書式では判定に使用する値を ELEMENT と記します。
+# 指定なし、小なり、大なり、矢印は ELEMENT と判定される値の両方が int もしくは double である場合にのみ使用できます。
+
+# 指定なし
+ELEMENT
+ELEMENT と同じ値であるときにのみ条件に合致したとして扱われます。
+
+# 小なり
+<ELEMENT
+ELEMENT より小さい場合にのみ条件に合致したとして扱われます。
+
+# 大なり
+ELEMENT<
+ELEMENT より大きい場合にのみ条件に合致として扱われます。
+
+# 矢印
+ELEMENT_1 <--> ELEMENT_2
+ELEMENT_1 より大きく、ELEMENT_2 より小さい場合にのみ条件に合致したとして扱われます。
+
+# 等価
+==ELEMENT
+ELEMENT と同じ値である場合にのみ条件に合致したとして扱われます。
+
+# 等価文字列
+==[ELEMENT]
+ELEMENT と完全に同じ文字列である場合にのみ条件に合致したとして扱われます。
+
+# 大小無視文字列
+?=[ELEMENT]
+大文字小文字を区別しなかった場合に ELEMENT と同じ文字列であれば条件に合致したとして扱われます。
+
+# 正規表現
+r=[ELEMENT]
+ELEMENT に指定された Java で有効な正規表現に合致する場合にのみ条件に合致したとして扱われます。
+```
+
+また、特殊な使い方として `allow_tag` もしくは `deny_tag` の場合にのみ、条件にてコンテナをまとめて指定することが出来ます。  
+その場合、型名には `string`, `int`, `double` のいずれかを指定し、条件に `(multi)(types:タイプ) コンテナ名` の書式に沿って指定してください。  
+いかに例を示します。  
+```
+terms:
+  # multi keys
+  tag: allow_tag
+  type: int # 仮
+  key: multi_keys # 仮
+  order: 0
+  value: (multi)(types:int*1,double*2,string*2) a,b,c,d,e
+
+```
+
+例  
+```
+terms:
+  "0":
+    tag: allow_tag
+    order: 0
+    key: test
+    type: string
+  "1":
+    tag: deny_tag
+    order: 1
+    key: test_2
+    type: double
+  "2":
+    tag: allow_value
+    order: 2
+    type: string
+    value: 20 <--> 30
+```
+
+
+--
+
 
 # Result
 成果物の設定ファイルには必ず設定しなくてはいけない項目4つと、オプション設定2つがあります。  
 
 ## 必須設定
-### 成果物の名前
+### name
 成果物の名前は `name` セクションに記載してください。  
 レシピを作成する際に使用します。  
 バニラアイテムのIDと異なる必要があり、加えて、他の成果物と重複することがあってはいけません。  
@@ -201,7 +320,7 @@ potion:
 
 例) `name: genetically_modified_crop`
 
-### 成果物の個数
+### amount
 成果物の個数は `amount` セクションに記載してください。  
 1以上の整数を記載してください。  
 
@@ -213,12 +332,19 @@ potion:
 
 例) `matchPoint: -1`
 
-### 成果物のアイテムID
+### nameOrRegex
 成果物のアイテムIDは `nameOrRegex` セクションに記載してください。  
-このセクションではアイテムIDを直接指定するか、もしくは正規表現を用いて素材のアイテムIDから文字列を切り出してアイテムIDを作成する方法のどちらかを使用することが出来ます。  
+このセクションでは
+- アイテムID を直接指定する
+- 正規表現を用いて素材のアイテムIDから文字列を切り出して新たなアイテムID を指定する
+- パススルーモードを指定する
+
+のいずれかの方法で成果物のアイテムを指定することが出来ます。  
 正規表現を使用しない場合は、[Spigot JavaDoc (Material)](https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html) を参考にアイテムIDを記載してください。  
 
 例) `nameOrRegex: stone`  
+
+---
 
 正規表現を使用し、素材のアイテムIDから成果物のアイテムIDを作成し適用する場合は  
 `素材のアイテムIDに使用する正規表現@成果物のアイテムIDを作成する文字列`  
@@ -231,6 +357,50 @@ potion:
 `WHITE_CONCRETE_POWDER` より切り出された `WHITE` を `{R}` の箇所に挿入するため `WHITE_CONCRETE` となります。  
 
 マッチ箇所は1か所のみ設けることが出来ます。複数のマッチ箇所を設けることはできません。  
+
+---
+
+パススルーモードを設定するには、  
+`pass -> パススルーしたいアイテムID`  
+のフォーマットで記載をしてください。  
+パススルーモードを使用する場合は Recipe ファイルとの連携が不可欠になるため、Result ファイルの使いまわしは控えることを推奨します。  
+また、パススルーしたいアイテム ID の部分に Matter の名前を指定することはできません。  
+必ずマインクラフト内に存在するアイテムのアイテム ID に設定してください。
+
+**パススルーするアイテムは、1つしか要求されない素材にしてください。**  
+(複数個要求されるアイテムに指定するとエラーになります)
+
+パススルーモードではパススルーするアイテムに様々な装飾を施すことが出来ます。  
+それらの装飾が必要ではなく、単にレシピ中で使用したアイテムを返却したい場合は Recipe ファイルの `returns` セクションを利用することを推奨します。  
+(アイテムに装飾を施さない場合、Recipe ファイルと連携するためにファイル構成がより複雑になり、レシピ管理の負担が増す恐れがあります。)
+
+例)
+```yaml
+# リザルトファイル
+name: pass_through_test_1
+amount: 1
+matchPoint: -1
+nameOrRegex: pass -> diamond_helmet
+metadata:
+  - pass_through,mode=pass/type=enchant/action=add/value=enchant=durability,level=5
+  - pass_through,mode=pass/type=lore/action=add/value=An enchant is added!
+
+# レシピファイル
+name: recipe
+tag: normal
+result: pass_through_test_1
+override:
+  - null -> n
+  - diamond_helmet -> h
+  - diamond -> d
+coordinate: 
+  - d,d
+  - n,h
+
+```  
+
+これらをリザルトファイルとレシピファイルに分割し、適用すると配置したダイヤモンドの頭防具に `耐久5` のエンチャントと `An enchant is added!` という説明文が追加されて返却されます。  
+
 
 ## オプション設定
 ### 成果物に付与するエンチャント
@@ -246,7 +416,7 @@ enchant:
 上記の例では、修繕のレベル1エンチャントを成果物に付与しています。  
 エンチャント名は [Spigot JavaDoc (Enchantment)](https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/enchantments/Enchantment.html) を参考にして記載してください。  
 
-### 成果物に付与するメタデータ
+### metadata
 成果物に付与するメタデータは `metadata` セクションに記載してください。  
 このセクションは、`種別,値` の順番で記載してください。  
 また、このセクションは付与したいメタデータが1つであってもリスト形式で記載してください。  
@@ -310,7 +480,12 @@ metadata:
 ```  
 上記の例では、跳躍力上昇レベル10、効果時間10秒をポーションに設定します。  
 ポーション効果は [Spigot JavaDoc (PotionEffectType)](https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/potion/PotionEffectType.html) を参考に記載してください。 
+ポーション効果は [Spigot JavaDoc (PotionEffectType)](https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/potion/PotionEffectType.html) を参考に記載してください。 
 
+
+---
+
+#### potionColor
 
 ---
 
@@ -546,6 +721,152 @@ returns:
   - "water_bucket,bucket,1"
 ```  
 上記の例は、素材に含まれる水バケツ1つにつきバケツ1つを返却します。  
+
+---
+
+## using_container_values_metadata
+アイテムが持つデータコンテナから値を読み取り、アイテムの作成時に条件として使用したり、各種アイテムの値に適用することが出来ます。  
+基本的に `matter 名 <--> 操作の種類 -> 値`　というフォーマットに従ったうえ、リスト形式で記載します。  
+
+値にコンテナ内のデータを使用したい場合は `$コンテナ名` のフォーマットで記載してください。  
+
+アイテム名やアイテムの説明文にてコンテナに格納されたデータを使用したい場合には、対象の箇所に `{$コンテナ名}` という形で記載してください。  
+また、`{$コンテナ名}` という文字列を使用したい場合には、 `\{$コンテナ名}` のように中括弧の前にバックスラッシュを記載してください。
+
+なお、指定したコンテナが存在しない場合や中身が無い場合には `"None"` という文字列が指定箇所に挿入されます。
+
+負の数値を記載する際は、`-10` のように `-`(マイナス) を用いるのではなく、 `~`(チルダ) を用いてください。
+
+内部での処理に整数値を使用する箇所では、与えられたデータの丸め込みを行うことがあります。そのため、多少の誤差が表れる事があります。
+
+例) 
+```yaml
+using_container_values_metadata:
+  - matter_1 <--> using_container_values_lore -> This item contains \{$container_1} = {$container_1}
+```
+この例では、 `matter_1` という Matter から読みだした `$container_1` の値を `This item` から始まる文章の `{$container_1}` に代入します。  
+`{}` の中身がすべて数値型 (double, int) の場合にのみ、四則演算と累乗計算を `{}` の中で実行し、計算結果をその場所に代入することが出来ます。  
+
+演算の種類と記号
+- 足し算 : +
+- 引き算 : -
+- 掛け算 : *
+- 割り算 : /
+- 累乗 : ^
+
+※演算の例  
+```yaml
+- matter_1 <--> using_container_values_lore -> Value -> {$container_1 + $container_2 - $container_3 * $container_4 / $container_5 % $container_6}
+```
+各種演算を行う場合は、コンテナの値と演算子の間に半角スペースを挿入してください。  
+
+### lore
+このタイプは、アイテムの説明文を操作する際に使用します。  
+
+フォーマット
+```yaml
+- matter名 <--> using_container_values_lore -> 説明文
+```
+
+説明文には半角英数字、全角文字を使用することが出来ます。  
+また、`§` を用いた文字装飾を適用することもできます。  
+
+### enchantment
+このタイプは、アイテムのエンチャントを操作する際に使用します。  
+
+フォーマット 1
+```yaml
+- matter名 <--> using_container_values_enchantment -> enchantment:エンチャント種別/level:エンチャントレベル
+```
+
+フォーマット 2
+```yaml
+- matter名 <--> using_container_values_enchantment -> enchantment:$コンテナ名/level:$コンテナ名
+```
+
+フォーマット 2 のようにエンチャント種別、レベルの両方、もしくはそれら片方のみにコンテナデータを使用することが出来ます。
+
+### potion_color
+このタイプは、ポーションの色を操作する際に使用します。  
+指定方法には RGB, random の 2 種類があります。
+
+フォーマット 1
+```yaml
+- matter名 <--> using_container_values_potion_color -> type:rgb/value:R->Red値,G->Green値,B->Blue値
+```
+Red, Green, Blue の各値には `0 ~ 255` の整数、または数値型のデータを持つコンテナ名を記載し適用することが出来ます。  
+
+フォーマット2
+```yaml
+- matter 名 <--> using_container_values_potion_color -> type:random
+```
+フォーマット 2 を記載したとき、RGB の各要素の値を `0 ~ 255` の範囲からランダムで決定し、適用します。  
+
+### tool_durability
+このタイプは、アイテムの耐久値を操作する際に使用します。  
+耐久値を操作することが出来ない Matter を対象にこの操作を記述した場合は、エラーを出して終了します。  
+
+フォーマット 1
+```yaml
+- matter名 <--> using_container_values_tool_durability -> type:absolute/value:耐久値
+```
+耐久値の部分には、0 より大きく、対象の Matter の最大耐久値以下の整数、もしくは数値型のデータが格納されたコンテナ名を記載し適用することが出来ます。  
+指定した値が成果物の残り耐久値になります。
+
+フォーマット 2
+```yaml
+- matter名 <--> using_container_values_tool_durability -> type:percentage/valeu:残り耐久パーセンテージ
+```
+
+残り耐久パーセンテージの部分には 0 ~ 100 の整数値、または数値型のデータが格納されたコンテナ名を記載し適用することが出来ます。  
+`成果物の新品状態の耐久値 * 指定したパーセンテージ / 100` を整数に丸めた値が、成果物の残り耐久値になります。
+
+### itme_name
+このタイプは、アイテムの名前を操作する際に使用します。  
+
+フォーマット
+```yaml
+- matter名 <--> using_container_values_item_name -> アイテム名
+```
+アイテム名の箇所には `{$コンテナ名}` のフォーマットを用いてコンテナデータを挿入することもできます。
+
+### attribute_modifier
+[recipe-attributemodifier]: ###attribute_modifier
+このタイプは、アイテムの属性を設定する際に使用します。
+
+フォーマット 1
+```yaml
+- matter名 <--> using_container_values_attribute_modifier -> type:属性/operation:操作/value:値
+```
+
+属性には設定したい属性、操作には `add`, `multiply`, `add_scalar` のいずれか、値には数値型のデータを持つコンテナ名か、実数を入力して適用することが出来ます。  
+
+なお、このフォーマットで属性を指定した場合には後述する適用スロットの設定は行われず、どの部位に装着した場合でも効果を発揮するようになります。
+
+フォーマット 2
+```yaml
+- matter名 <--> using_container_values_attribute_modifier -> type:属性/operation:操作/value:値/slot:適用スロット
+```
+適用スロットには、
+- CHEST
+- FEET
+- HAND
+- HEAD
+- LEGS
+- OFF_HAND  
+
+のいずれかを指定してください。  
+スロットを指定すると、指定した部位にアイテムを装着した場合のみ属性の効果が適用されるようになります。  
+
+属性、操作、適用スロットの技術的仕様や使用可能な値については
+- 属性 : [Attribute (Spigot JavaDoc)](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/attribute/Attribute.html)
+- 操作 : [AttributeModifier.Operation (Spigot JavaDoc)](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/attribute/AttributeModifier.Operation.html)
+- 適用スロット : [EquipmentSlot (Spigot JavaDoc)](https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/inventory/EquipmentSlot.html)
+
+を参照してください。
+
+属性によって指定可能な `value` の範囲は異なるため注意してください。  
+参考 : [MinecraftWiki 属性 (Attribute)](https://minecraft.fandom.com/ja/wiki/%E5%B1%9E%E6%80%A7)
 
 ---
 
