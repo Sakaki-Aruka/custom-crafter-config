@@ -5,6 +5,8 @@
   
 基本的にすべての装飾セクションにおいて、プレースホルダを用いたコンテナデータの挿入や数値計算をサポートしています。  
 また、`random : OK` と記載されている箇所では数値 (またはその処理固有の値) のランダム構文をサポートしています。  
+<details><summary>数値のランダム構文</summary>
+
 ## 数値のランダム構文
 `random[下限?:上限?]` のフォーマットに従ってください。`下限?`, `上限?` はそれぞれ記載されていても、されていなくてもどちらでも良いことを示しています。使用箇所ごとに内部で下/上限値が設定されているので、`random[:]` でも機能します。(なお、コンフィグに記載した下/上限値がシステム内部で設定された値の範囲から外れている場合は、**システム内部で定義された範囲が優先して適用されます。**)  
 
@@ -15,19 +17,23 @@
 - `random[下限:上限]` : コンフィグに記載された下限値から上限値までの値
 
 それぞれのシステム内部で設定された下限値、上限値は `random under : ~~~`, `random upper : ~~~` のように記載しています。
+</details>
 
----
-
+<details><summary>その他のランダム構文</summary>
+  
 ## その他のランダム構文
 基本的にランダムに値を取り出す文は `random[値]` の形式を取り、全ての要素を示す `all`、現在含まれている値を示す `self` が用意されています。(一部の構文では `self` が用意されていないことがあります。)  
   
 `!` を用いて否定を表すこと、`,` で要素を区切ることも、ほとんどのランダム構文に共通しているルールです。  
+</details>
 
 ---
 
 `player data: OK` と記載されている項目については以下のプレイヤーデータをプレースホルダ内で使用することができます。  
 
 ## プレイヤーデータ一覧
+<details><summary>文字列データ</summary>
+
 ### 文字列データ
 - `$PLAYER_NAME$` : プレイヤー名
 - `$PLAYER_UUID$` : プレイヤーの UUID
@@ -36,6 +42,11 @@
 - `$PLAYER_CLIENT_BRAND_NAME$` : プレイヤーのクライアント名 (空の場合は `null`)
 - `$PLAYER_CURRENT_GAME_MODE$` : プレイヤーの現在のゲームモード
 - `$PLAYER_FACING$` : プレイヤーが向いている方角
+
+</details>
+
+<details><summary>数値データ (整数)</summary>
+
 ### 数値データ(整数)
 - `$PLAYER_CURRENT_Xi$` : プレイヤーの X 座標(小数点以下切り捨て)
 - `$PLAYER_CURRENT_Yi$` : プレイヤーの Y 座標(小数点以下切り捨て)
@@ -44,6 +55,11 @@
 - `$PLAYER_PING$` : プレイヤーの ping 値
 - `$PLAYER_EXP_LEVEL$` : プレイヤーの経験値レベル
 - `$PLAYER_MAXIMUM_NO_DAMAGE_TICKS$` : プレイヤーが最も長くダメージを受けなかったゲーム内ティック
+
+ </details>
+
+ <details><summary>数値データ (小数点有)</summary>
+
 ### 数値データ(小数点有)
 - `$PLAYER_CURRENT_X$` : プレイヤーの X 座標
 - `$PLAYER_CURRENT_Y$` : プレイヤーの Y 座標
@@ -52,11 +68,24 @@
 - `$PLAYER_CURRENT_YAW$` : プレイヤーのヨー方向の回転量
 - `$PLAYER_EXP$` : プレイヤーが現在持つ経験値量
 - `$PLAYER_CURRENT_HEALTH$` : プレイヤーの体力値
+
+</details>
+
+<details><summary>真偽値</summary>
+
 ### 真偽値
 - `$PLAYER_IN_WATER$` : プレイヤーが水に浸っているか
 - `$PLAYER_IS_FLYING$` : プレイヤーが飛んでいるか
 - `$PLAYER_IN_RAIN$` : プレイヤーが雨にうたれているか
 - `$PLAYER_IN_LAVA$` : プレイヤーが溶岩の中にいるか
+
+</details>
+
+---
+
+# 使用可能な操作一覧
+
+<details><summary>lore</summary>
 
 # lore
 効果 : アイテムに説明文を追加します。
@@ -72,6 +101,10 @@
 `value: ` の後ろに説明文を記載してください。
 
 e.g `type: lore, value: This is a pen.`
+
+</details>
+
+<details><summary>enchant, enchant_book</summary>
 
 # enchant, enchant_book
 効果 : 
@@ -130,6 +163,10 @@ e.g. `random[all,!fortune]` : 全てのエンチャントから幸運を除い�
 
 e.g. `random[all,!self]` : 全てのエンチャントから現在含んでいる全てのエンチャントを除いたランダムなエンチャント
 
+</details>
+
+<details><summary>potion_color_rgb</summary>
+
 # potion_color_rgb
 効果 : ポーションの色を RGB で指定します。
 
@@ -142,6 +179,10 @@ e.g. `random[all,!self]` : 全てのエンチャントから現在含んでい�
 ---
 
 各要素には 0 ~ 255 の範囲内の整数を記載してください。
+
+</details>
+
+<details><summary>potion_color_name</summary>
 
 # potion_color_name
 効果 : ポーションの色を色の名前から指定します。
@@ -171,6 +212,10 @@ e.g. `random[all,!self]` : 全てのエンチャントから現在含んでい�
 - `white`
 - `yellow`
 
+</details>
+
+<details><summary>texture_id</summary>
+
 # texture_id
 効果 : アイテムに適用するテクスチャの ID を指定します。
 
@@ -179,6 +224,10 @@ e.g. `random[all,!self]` : 全てのエンチャントから現在含んでい�
 - `player data : OK`
 
 正規表現 : `type: texture_id, value: [0-9]+`
+
+</details>
+
+<details><summary>tool_durability_percentage</summary>
 
 # tool_durability_percentage
 効果 : アイテムの残り耐久値をパーセンテージで指定します。
@@ -193,6 +242,10 @@ e.g. `random[all,!self]` : 全てのエンチャントから現在含んでい�
 
 指定した値、もしくはプレースホルダ内で計算した値が 1 未満である場合は、残り耐久値を 1 に設定します。
 
+</details>
+
+<details><summary>tool_durability_real</summary>
+
 # tool_durability_real
 効果 : アイテムの残り耐久値を数字で指定します。
 
@@ -205,6 +258,10 @@ e.g. `random[all,!self]` : 全てのエンチャントから現在含んでい�
 ---
 
 指定した値、もしくはプレースホルダ内で計算した値が 1 未満である場合は、残り耐久値を 1 に設定します。
+
+</details>
+
+<details><summary>item_name</summary>
 
 # item_name
 効果 : アイテムの名前を指定します。
@@ -219,6 +276,10 @@ e.g. `random[all,!self]` : 全てのエンチャントから現在含んでい�
 
 マインクラフト内の装飾文字を用いる場合は、`§` を使用してください。
 
+</details>
+
+<details><summary>attribute_modifier</summary>
+
 # attribute_modifier
 効果 : アイテムの属性を操作します。
 
@@ -231,6 +292,10 @@ e.g. `random[all,!self]` : 全てのエンチャントから現在含んでい�
 ---
 
 属性の詳細は [こちら (Attribute@fandom wiki)](https://minecraft.fandom.com/ja/wiki/%E5%B1%9E%E6%80%A7) をご覧ください。
+
+</details>
+
+<details><summary>attribute_modifier_equipment</summary>
 
 # attribute_modifier_equipment
 効果 : スロット制限付きの属性を操作します。
@@ -252,6 +317,10 @@ slot には
 - `off_hand`
 
 のいずれかを指定してください。
+
+</details>
+
+<details><summary>item_flag</summary>
 
 # item_flag
 効果 : アイテムに付与された隠れた効果を操作します。
@@ -276,6 +345,10 @@ slot には
 - `hide_placed_on` : アドベンチャーモードでも設置可能なブロックを隠すかどうか
 - `hide_unbrealable` : 耐久値が無限であることを隠すかどうか
 
+</details>
+
+<details><summary>unbreakable</summary>
+
 # unbreakable
 効果 : アイテムの耐久値を無限にします。
 
@@ -284,6 +357,10 @@ slot には
 - `player data : OK`
 
 正規表現 : `type: unbreakable, value: (true|false)`
+
+</details>
+
+<details><summary>potion_effect, stew</summary>
 
 # potion_effect, stew
 効果 : 
@@ -337,6 +414,10 @@ e.g. `type: stew, value: random[self]->random[all,!self]:[a=10,d=200,ambient,!ic
 これは、ポーション効果を新規に追加する際の書き方です。これらは
 `追加するポーション効果->[amplifier=効果レベル,duration=効果時間]` として表されます。
 
+</details>
+
+<details><summary>leather_armor_color</summary>
+
 # leather_armor_color
 効果 : 皮防具の色を変更する
 
@@ -362,6 +443,10 @@ e.g. `type: stew, value: random[self]->random[all,!self]:[a=10,d=200,ambient,!ic
 ---
 
 色名から指定する場合に使用可能なワードは `potion_color_name` に記載されているものと同じです。
+
+</details>
+
+<details><summary>book</summary>
 
 # book
 効果 : 本の内容を操作する。
@@ -401,6 +486,10 @@ e.g. `type: stew, value: random[self]->random[all,!self]:[a=10,d=200,ambient,!ic
 - `copy_of_copy` : コピーのコピー
 - `tattered` : ボロボロ
 
+</details>
+
+<details><summary>head</summary>
+
 # head
 効果 : プレイヤーヘッドの情報を操作する。
 
@@ -423,6 +512,10 @@ e.g. `type: stew, value: random[self]->random[all,!self]:[a=10,d=200,ambient,!ic
 
 また、作成されるプレイヤーヘッドの名前はデフォルトでは `ランダム生成されたUUID's head` となります。  
 変更する場合は `item_name` を使用してください。  
+
+</details>
+
+<details><summary>lore_modify</summary>
 
 # lore_modify
 効果 : アイテムの説明文を操作します。
@@ -453,6 +546,10 @@ e.g. `type: stew, value: random[self]->random[all,!self]:[a=10,d=200,ambient,!ic
 - `remove` : `line=` 以下に指定した行を削除します。2 つ目の `value=` 以下のデータを必要としません。  
 - `insert` : `line=` 以下に指定した行に `value=` 以下の文字列を挿入します。この操作が実行された時点で、アイテムの説明文の行数が 1 行増加し、挿入箇所以後のインデックスが 1 増加します。  
 
+</details>
+
+<details><summary>attribute_modifier_modify</summary>
+
 # attribute_modifier_modify
 効果 : アイテムに設定された attribute_modifier を操作する。
 
@@ -475,6 +572,10 @@ e.g. `type: stew, value: random[self]->random[all,!self]:[a=10,d=200,ambient,!ic
 - `attribute=([a-zA-Z_]+),op=([a-zA-Z_]+),value=([\\d.-]+),slot=([a-zA-Z_]+)` : 装備スロットを指定する場合
 - `attribute=([a-zA-Z_]+),op=([a-zA-Z_]+),value=([\\d.-]+)` : 装備スロットを指定しない場合
 
+</details>
+
+<details><summary>result_value_sync</summary>
+
 # result_value_sync
 効果 : この機能が呼び出された時点で成果物に付与されているコンテナデータを `$result.キー名` の形式で呼び出すことができるようにデータの同期を行う。
 
@@ -483,6 +584,10 @@ e.g. `type: stew, value: random[self]->random[all,!self]:[a=10,d=200,ambient,!ic
 正規表現 : `type: result_value_sync`
 
 **この機能は値を必要としません。**
+
+</details>
+
+<details><summary>container</summary>
 
 # container
 効果 : 成果物にコンテナデータを設定する。
@@ -512,6 +617,10 @@ e.g. `type: stew, value: random[self]->random[all,!self]:[a=10,d=200,ambient,!ic
 
 `modify` : `target=` 以下に指定された名前のコンテナデータの中身を `value=` 以下に指定されたデータに書き換えます。このとき、書き換えるデータの型は書き換えられる元のコンテナと一致させなければいけません。  
 
+</details>
+
+<details><summary>material</summary>
+
 # material
 効果 : 成果物のアイテム種別を変更する。
 
@@ -523,6 +632,9 @@ e.g. `type: stew, value: random[self]->random[all,!self]:[a=10,d=200,ambient,!ic
 
  正規表現 : `type: material, value: [a-zA-Z_]+`
 
+</details>
+<details><summary>amount</summary>
+
 # amount
 効果 : 成果物の数量を変更する。
 
@@ -533,6 +645,9 @@ e.g. `type: stew, value: random[self]->random[all,!self]:[a=10,d=200,ambient,!ic
 ---
 
 正規表現 : `type: amount, value: [0-9]+`
+
+</details>
+<details><summary>run_command_as_console</summary>
 
 # run_command_as_console
 効果 : サーバーコンソールとしてコマンドを実行する。
@@ -549,6 +664,9 @@ e.g. `type: stew, value: random[self]->random[all,!self]:[a=10,d=200,ambient,!ic
 
 `value: ` 以下に記載するコマンドにスラッシュは不要です。
 
+</details>
+<details><summary>run_command_as_player</summary>
+
 # run_command_as_player
 効果 : プレイヤー(アイテム作成者)としてコマンドを実行する。
 
@@ -564,7 +682,13 @@ e.g. `type: stew, value: random[self]->random[all,!self]:[a=10,d=200,ambient,!ic
 
 `value: ` 以下に記載するコマンドにスラッシュは不要です。
 
+</details>
+<details><summary>item_define</summary>
+
 # item_define
+
+</details>
+<details><summary>set_storage_item</summary>
 
 # set_storage_item
 効果 : `item_define` で定義したアイテムを現在のアイテムにセットする。(現在のアイテムがバンドルである場合に限る)
@@ -584,6 +708,9 @@ e.g. `type: stew, value: random[self]->random[all,!self]:[a=10,d=200,ambient,!ic
 (オプション)`amount` : 配置するアイテムの数量を変更することができます。(1 ~ 127)  
 (オプション) `times` : 指定した回数だけバンドルにアイテムを配置します。(`amount`  で数量を変更している場合には、変更された数量のまま指定された回数だけ配置されます。)  
 
+</details>
+<details><summary>can_destroy</summary>
+
 # can_destroy
 効果 : アドベンチャーモードでも破壊することができるブロックを指定する。
 
@@ -599,6 +726,9 @@ e.g. `type: stew, value: random[self]->random[all,!self]:[a=10,d=200,ambient,!ic
 
 `value` にはアドベンチャーモードでも破壊可能にするブロックの ID を `,` 区切りで列挙してください。
 
+</details>
+<details><summary>repair_cost</summary>
+
 # repair_cost
 効果 : アイテムの修理コストを設定する。
 
@@ -609,6 +739,9 @@ e.g. `type: stew, value: random[self]->random[all,!self]:[a=10,d=200,ambient,!ic
 ---
 
 正規表現 : `type: repair_cost, value: [0-9]+`
+
+</details>
+<details><summary>firework</summary>
 
 # firework
 効果 : 花火または花火の星の設定を行う。
@@ -680,6 +813,9 @@ RGB で指定する場合には `rgb=赤要素の値-緑要素の値-青要素�
   
 e.g. `power=random[10:30]` (威力を 10 ~ 30 の範囲のランダムな値に設定)  
 
+</details>
+<details><summary>tropical_fish</summary>
+
 # tropical_fish
 効果  : 熱帯魚バケツの中身の設定を行う。
 
@@ -746,4 +882,7 @@ e.g. `power=random[10:30]` (威力を 10 ~ 30 の範囲のランダムな値に�
 指定例
 - `pattern=random[all,!betty,!kob]` (betty, kob 以外の全ての図柄からランダムに選んだ1つ)
 - `pattern=stripey`
+
+</details>
+
 
