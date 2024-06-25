@@ -885,8 +885,9 @@ e.g. `power=random[10:30]` (威力を 10 ~ 30 の範囲のランダムな値に�
 
 </details>
 <details><summary>spawn_egg</summary>
+
 # spawn_egg  
-効果：成果物がスポーンエッグである場合、その中身のエンティティタイプを設定する。
+効果：成果物がスポーンエッグである場合、その中身のエンティティタイプを設定する。  
 
 ---
 
@@ -913,6 +914,7 @@ value: name:self,actions:type=zombie
 </details>
 
 <details><summary>entity_define</summary>
+
 # entity_define  
 効果：成果物がスポーンエッグである場合、その中身の設定を行う  
   
@@ -962,6 +964,7 @@ entity_define は 1 つのレシピファイル内であれば操作した内容
 下に `actions` の一覧を示します。  
   
 <details><summary>add_passenger</summary>
+
 # add_passenger  
 `random : OK(数値ランダムのみ)`  
 `custom data : OK`  
@@ -982,21 +985,25 @@ entity_define は 1 つのレシピファイル内であれば操作した内容
 - type: entity_define
   value: "name:self,type=zombie,->other,type=skeleton,->self,add_passenger+=other"
 # self (ゾンビ)の上に other (スケルトン)を騎乗させる。
-```  
+```
+
 </details>
 
 <details><summary>item_define</summary>
+
 # item_define  
-INTERNAL FUNCTION
+INTERNAL FUNCTION  
+
 </details>
 
 <details><summary>set_armor</summary>
+
 # set_armor
 `random : OK(数値ランダムのみ)`
 
 ---
 
-正規表現 : `(predicate=(true|false)/)?(helmet|chest|leggings|boots|mainhand|offhand)=([$.a-zA-Z0-9_-]+)`
+正規表現 : `(predicate=(true|false)/)?(helmet|chest|leggings|boots|mainhand|offhand)=[$.a-zA-Z0-9_-]+`
 
 ---
 
@@ -1016,18 +1023,53 @@ INTERNAL FUNCTION
 
 define:
   - name: [iron_helm]
-    base: IRON_HELMET
+    base: [IRON_HELMET]
 # self (ゾンビ)の頭部位に鉄のヘルメットを装備させる。
 ```
+
 </details>
 
 <details><summary>set_drop_chance</summary>
+
+# set_drop_chance
+`random : OK(数値ランダムのみ)`  
+
+---
+
+正規表現 : `(predicate=(true|false)/)?slot=(helmet|chest|leggings|boots|mainhand|offhand)/chance=[0-9.]+`  
+
+---
+
+効果 : 各部位のアイテムのドロップ率を設定する。  
+
+`predicate` に条件(任意)、`slot` に対象となる部位、`chance` にドロップ率を記載します。  
+* (`chance=[0-9.]+` でプレースホルダを利用する場合、評価後の値を正規表現にかけます。)
+
 </details>
 
 <details><summary>set_various_value</summary>
+
+# set_various_value
+DEPRECATED
+
 </details>
 
-<details><summary>ai</summary>
+<details><summary>ai</summary>  
+
+# AI  
+`random : OK`
+
+---
+
+正規表現 : `ai=(true|false)`  
+
+---
+
+効果 : 対象のエンティティ(モブ限定)に行動 AI を設定する(true 時のみ)。  
+
+直接書かれた値やプレースホルダ内の計算値を代入した結果が `ai=true` になる場合、スポーンするモブに行動 AI を設定する。  
+(デフォルトでは行動 AI オン)
+
 </details>
 
 <details><summary>set_spawner_value</summary>
