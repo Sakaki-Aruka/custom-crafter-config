@@ -884,5 +884,162 @@ e.g. `power=random[10:30]` (威力を 10 ~ 30 の範囲のランダムな値に�
 - `pattern=stripey`
 
 </details>
+<details><summary>spawn_egg</summary>
+# spawn_egg  
+効果：成果物がスポーンエッグである場合、その中身のエンティティタイプを設定する。
 
+---
 
+使用可能な特殊データ無し  
+
+---
+
+正規表現 : `name:([a-zA-Z_0-9]+),actions:type=[A-Z_0-9]+`  
+
+---
+
+このセクションではプレースホルダやプレイヤーデータは使用できません。  
+
+## name  
+name には `spawn_egg` を定義したあとに記述する `entity_define` 内で使用するための名前を設定してください。  
+この名前は 1 つのレシピファイル内で固有のものにしてください。  
+  
+設定例  
+```yaml
+type: spawn_egg
+value: name:self,actions:type=zombie
+```  
+
+</details>
+
+<details><summary>entity_define</summary>
+# entity_define  
+効果：成果物がスポーンエッグである場合、その中身の設定を行う  
+  
+---
+
+- `player data : OK`
+- `random : OK (詳細は後述)`
+
+---
+
+正規表現 : `value: name:[a-zA-Z0-9]+,actions:.+`  
+
+---
+
+このセクションではスポーンエッグ、またはスポーンエッグを使用したスポナーから湧くエンティティの設定を行います。  
+  
+`name` に操作の対象となるエンティティの名前を、`actions` にカンマ区切りで操作を書き連ねます。  
+entity_define は 1 つのレシピファイル内であれば操作した内容を保存しているので、エンティティの定義を複数行に渡って行うことができます。  
+  
+新規のエンティティを生み出す際は可読性の面から  
+```yaml
+- type: entity_define
+  value: "name:名前,actions:type=エンティティの種類"
+```  
+のように新しい行で定義するのが望ましいのですが、  
+```yaml
+# self はこの行以前に定義したエンティティの名前とする
+- type: entity_define
+  value: "name:self,actions:selfに対する処理,->新しいエンティティの名前,type=新しいエンティティの種類"
+```  
+のように右向き矢印(`->`)を用いて新しいエンティティの名前を確保し、その次の操作で `type=` によって種類を指定することによっても作成することができます。  
+この方法を用いて新しいエンティティを作成する際は必ず`->` で**名前を確保した直後に `type=` によって種類を指定**しなくてはいけません。  
+また、右向き矢印はエンティティの新規作成だけでなく、行の途中で対象とするエンティティを変更するためにも使用することができます。  
+以下の例では、行の最初にエンティティ `self` を指定していますが、途中から対象となるエンティティを `other` に変更しています。  
+```yaml
+- type: entity_define
+  value: "name:self,actions:ai=false,->other,ai=true"
+```  
+  
+行の途中で対象となるエンティティを変更すると、再度変更されない限りその行の終わりまでエンティティの指定が移動したままになります。  
+もちろん、行の途中で何度も対象となるエンティティを変更することはできますが、これもまた可読性の面から考えるとあまり好ましい書き方とはいえません。  
+  
+　システムは `entity_define` に書かれた情報を解析する際、 `container` セクションの上に書かれた情報から読み取るため、操作で使用するエンティティは必ずその操作前に前の行、もしくは同じ行のそれ以前で定義されている必要があります。  
+  
+---
+
+下に `actions` の一覧を示します。  
+  
+<details><summary>add_passenger</summary>
+# add_passenger  
+`random : OK(数値ランダムのみ)`  
+`custom data : OK`  
+- `$CURRENT_TARGET_PASSENGERS_COUNT$` : その行でターゲットとなっているエンティティに騎乗しているエンティティの総数  
+
+---
+  
+正規表現 : `add_passenger=+エンティティ名`  
+
+---
+  
+効果 : `+=` の後に指定された名前を持つエンティティを、このキーワードが呼び出されたときに対象となっているエンティティへ騎乗させます。 
+  
+騎乗させようとしたエンティティが存在しない場合、システムはエラーを出さずこの処理をスキップします。  
+  
+例  
+```yaml
+- type: entity_define
+  value: "name:self,type=zombie,->other,type=skeleton,->self,add_passenger+=other"
+# self (ゾンビ)の上に other (スケルトン)を騎乗させる。
+```  
+</details>
+
+<details><summary>item_define</summary>
+# item_define  
+INTERNAL FUNCTION
+</details>
+
+<details><summary>set_armor</summary>
+# set_armor
+`random : OK(数値ランダムのみ)`
+
+---
+
+正規表現 : `(predicate=(true|false)/)?(helmet|chest|leggings|boots|mainhand|offhand)=([$.a-zA-Z0-9_-]+)`
+
+---
+
+効果 : 対象となるエンティティに `define` セクションで定義したアイテムを装備させます。  
+  
+`predicate` には、この操作を実行するための条件を記載することができます。  
+条件にはプレースホルダと、その内部での各種演算を利用することができます。  
+条件を利用しない場合は記載を省略することができます。 
+  
+基本的な構文は `装着部位=装着するアイテムの定義名` のかたちを取ります。  
+
+例  
+```yaml
+- type: item_define
+- type: entity_define
+  value: "name:self,type=zombie,set_armor=helmet=iron_helm"
+
+define:
+  - name: [iron_helm]
+    base: IRON_HELMET
+# self (ゾンビ)の頭部位に鉄のヘルメットを装備させる。
+```
+</details>
+
+<details><summary>set_drop_chance</summary>
+</details>
+
+<details><summary>set_various_value</summary>
+</details>
+
+<details><summary>ai</summary>
+</details>
+
+<details><summary>set_spawner_value</summary>
+</details>
+
+<details><summary>falling_type</summary>
+</details>
+
+<details><summary>dropped_item_detail</summary>
+</details>
+
+<details><summary>splash_potion_detail</summary>
+</details>
+
+</details>
