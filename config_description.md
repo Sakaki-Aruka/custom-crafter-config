@@ -1,8 +1,8 @@
 # config.yml
 ## baseBlock
-このセクションには、カスタムクラフターを開くために必要な基礎ブロックの情報を保持するファイルが存在するディレクトリのパスを書いてください。  
+このセクションには、カスタムクラフターを開くために必要な基礎ブロックのブロック ID を記載してください。 
 
-例) `baseBlock: /plugins/Custom_Crafter/baseBlock`  
+例) `baseBlock: GOLD_BLOCK`  
 
 
 ## results
@@ -449,12 +449,15 @@ returns:
 ---
 
 ### container
+
+このセクションの詳細な説明は [Recipe Features Description](https://github.com/Sakaki-Aruka/custom-crafter-config/blob/master/recipe_features_description.md) を参照してください。
+
 このセクションでは成果物に対して様々なデータを設定することが出来ます。  
 
 以下の正規表現に従ってください。  
 ```yaml
 -
-  predicate: (none|string|value)
+  predicate: (none|string|value) # none の場合は省略可
   formula: (.+) # predicate: none の場合は不要
   type: # 記載可能な値については後述
   value: (.+)
@@ -506,6 +509,8 @@ returns:
   - tropical_fish: 熱帯魚入りバケツに関する設定を行う
   - spawn_egg: スポーンエッグに関する設定を行う
   - entity_define: スポーンエッグに関する詳細な設定を行う
+
+<details><summary>Value の詳細を開く</summary>
 
 - value: 
   - `type` に指定した値によって従うべき正規表現パターンが異なります。
@@ -653,3 +658,4 @@ returns:
     - `$RESULT_AMOUNT$`: 成果物の個数
 
   - その処理特有の特殊な値、数値型のデータであるときのみ使用することが出来る特殊な値を呼び出して使用する
+</details>
