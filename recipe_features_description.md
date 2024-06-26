@@ -1003,7 +1003,7 @@ INTERNAL FUNCTION
 
 ---
 
-正規表現 : `(predicate=(true|false)/)?(helmet|chest|leggings|boots|mainhand|offhand)=[$.a-zA-Z0-9_-]+`
+正規表現 : `set_armor=(predicate=(true|false)/)?(helmet|chest|leggings|boots|mainhand|offhand)=[$.a-zA-Z0-9_-]+`
 
 ---
 
@@ -1036,7 +1036,7 @@ define:
 
 ---
 
-正規表現 : `(predicate=(true|false)/)?slot=(helmet|chest|leggings|boots|mainhand|offhand)/chance=[0-9.]+`  
+正規表現 : `set_drop_chance=(predicate=(true|false)/)?slot=(helmet|chest|leggings|boots|mainhand|offhand)/chance=[0-9.]+`  
 
 ---
 
@@ -1057,7 +1057,7 @@ DEPRECATED
 <details><summary>ai</summary>  
 
 # AI  
-`random : OK`
+`random : OK(数値ランダムのみ)`  
 
 ---
 
@@ -1067,21 +1067,140 @@ DEPRECATED
 
 効果 : 対象のエンティティ(モブ限定)に行動 AI を設定する(true 時のみ)。  
 
-直接書かれた値やプレースホルダ内の計算値を代入した結果が `ai=true` になる場合、スポーンするモブに行動 AI を設定する。  
+直接書かれた値やプレースホルダ内の計算値を代入した結果が `ai=true` になる場合、スポーンするモブに行動 AI を設定します。  
 (デフォルトでは行動 AI オン)
 
 </details>
 
 <details><summary>set_spawner_value</summary>
+
+# set_spawner_value
+`random : OK`  
+- `under limit(max_nearby_entities) : 1`
+- `upper limit(max_nearby_entities) : 1000`
+- `under limit(min_spawn_delay / max_spawn_delay) : 1`
+- `upper limit(min_spawn_delay / max_spawn_delay) : 2,147,483,646 (Integer.MAX_VALUE - 1)`
+- `under limit(spawn_count) : 1`
+- `upper limit(spawn_count) : 100`
+- `under limit(spawn_range) : 0`
+- `upper limit(spawn_range) : 100`
+- `under limit(req_player_range) : 0`
+- `upper limit(req_player_range) : 64`
+- `under limit(block_light / sky_light) : 0`
+- `upper limit(block_light / sky_light) : 15`
+- `under limit(weight) : 1`
+- `upper limit(weight) : 1000`  
+
+---
+
+正規表現 : `set_spawner_value=((max_nearby_entities|max_spawn_delay|min_spawn_delay|spawn_range|spawn_count|req_player_range|spawn_weight|max_block_light|min_block_light|max_sky_light|min_sky_light|rough_control):([0-9]+|random\[([0-9-]+)?:([0-9-]+)?]);)+`  
+
+---
+
+効果 : スポーンエッグをスポナーに使用したとき、各種パラメータの値を設定する。  
+
+スポナーの各種パラメータを設定します。  
+設定可能なパラメータは以下に示します。  
+- `max_nearby_entities` : スポナーの湧き範囲内に存在していても湧きに影響が出ないエンティティの数 + 1
+- `min_spawn_delay` : 最小の湧き間隔 (ゲーム内ティック, 1tick=1/20sec)
+- `max_spawn_delay` : 最大の湧き間隔 (〃)
+- `spawn_range` : 湧き範囲
+- `spawn_count` : 一度に湧くエンティティの数(デフォルト値=4)
+- `req_player_range` : スポナーがアクティブになる距離(デフォルト値=16)
+- `spawn_weight` : ウェイト(デフォルト値=1)
+- `max_block_light` : スポナーが稼働するために必要な最大光量(スポナーに当たる光量)
+- `min_block_light` : スポナーが稼働するために必要な最低光量(〃)
+- `max_sky_light` : スポナーが稼働するために必要な最大光量(空の光量)
+- `min_sky_light` : スポナーが稼働するために必要な最低光量(〃)
+- `rough_control` : このスポナーが最初に湧かせたエンティティのコピーを生成し続ける(引数不要)
+
+`rought_control` 以外のパラメータの設定には値が必要となり、`パラメータ名:値` で示され、複数記述する際はセミコロン(`;`)で区切ります。  
+  
+`spawner_min_delay` もしくは `spawner_max_delay` を設定する場合は、事前に `min_block_light`, `max_block_light`, `min_sky_light`, `max_sky_light` -> `weight` の設定が必要になります。(5 つのパラメータのうち `weight` は最後に設定しなくてはいけません)  
+また、`block_light`, `sky_light`, `spawn_delay` は `min` と `max` の大小関係が `min <= max` である必要があります。  
+例  
+```yaml
+- type: entity_define
+  value: "name:self,actions:set_spawner_value=min_block_light:0,max_block_light:15,min_sky_light:0,max_sky_light:15,weight:1"
+# ブロックに当たる光量 0 ~ 15, 空の光量 0 ~ 15 の場合にエンティティをスポーンさせる
+```  
+
+
 </details>
 
 <details><summary>falling_type</summary>
+
+# falling_type
+`random : OK`  
+- `all` : すべてのブロック
+
+--- 
+
+正規表現 : `falling_type=(predicate:(true|false);)?name:[a-zA-Z_0-9]+;block:[a-zA-Z_0-9\[\]!/]+(;toBlock:(true|false))?(;dropItem:(true|false))?(damage:(default|[0-9.]+))?`  
+
+---
+
+効果 : スポーンさせるエンティティが falling_block のとき、各種パラメータを設定する。  
+
+## name　(必須)
+`name` には対象となるエンティティの名前を入れてください。  
+
+## block (必須)
+`block` には落下ブロックの種類を入れてください。このセクションではカスタムされたランダム機能を使用することができます。　　
+ランダム構文で使用可能なキーワードは以下の通りです。  
+- `all` : すべてのブロック
+- `solid` : 上にブロックを積み重ねられるタイプのブロックすべて
+- `occluding` : 不透過ブロックすべて
+
+このセクションでのランダム構文における各要素の区切りにはカンマ(`,`)ではなくスラッシュ(`/`)を使用してください。  
+  
+例  
+```yaml
+- type: entity_define
+  value: "name:self,actions:type=falling_block,falling_type=name:self;block:random[all/!COMMAND_BLOCK]"
+# self という名前を持つすべてのブロック(コマンドブロック以外)からランダムに選ばれた種類の落下ブロックを作成
+```
+
+## toBlock (任意)
+`toBlock` には落下ブロックが地面に到達した際にブロック化するか否かを入れてください。  
+デフォルトでは `toBlock:false` の状態であり、地面に到達してもブロック化せずにエンティティは消滅します。アイテムはドロップしません。  
+落下ブロックは `toBlock:true` の状態で地面またはブロックに接すると、ブロック化を試みます。接したブロックがフルサイズではない場合などの場合はブロック化に失敗し、(`dropitem:true` である場合は)アイテムとしてドロップされます。  
+
+## dropItem (任意)
+`dropItem` には落下ブロックがフルサイズではないブロックなどに当たった際にアイテム化してドロップするか否かを入れてください。  
+デフォルトでは `dropItem:false` の状態であり、アイテムをドロップすることはありません。  
+
+## damage (任意)
+`damage` には落下ブロックがエンティティにもたらすダメージを入れてください。  
+デフォルトの落下ダメージを適用したい場合は `default` キーワードを使用してください。  
+ダメージを設定する場合には 1 以上 2147483647 以下の範囲で設定してください。  
+小数を指定した場合には整数への丸め込みが行われます。  
+例  
+`falling_type=name:self;block:random[all];damage:default`  
+
 </details>
 
 <details><summary>dropped_item_detail</summary>
+
+# dropped_item_detail
+プレースホルダのみ使用可  
+
+---
+
+正規表現 : `dropped_item_detail=(predicate:(true|false);)?item:[a-zA-Z_0-9]+`  
+
+---
+
+効果 : スポーンさせるエンティティがアイテムである場合に、そのアイテムのパラメータを設定する。  
+
+`item_define` で定義したアイテムを `item:` に設定します。
+
 </details>
 
 <details><summary>splash_potion_detail</summary>
+
+# splash_potion_detail
+
 </details>
 
 </details>
