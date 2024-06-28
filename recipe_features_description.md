@@ -1199,7 +1199,168 @@ DEPRECATED
 
 <details><summary>splash_potion_detail</summary>
 
-# splash_potion_detail
+# splash_potion_detail  
+`random : OK`
+- `under limit(duration / durationOnUse / reapplicationDelay / waitTime) : -1 (infinity duration)`
+- `upper limit(duration / durationOnUse / reapplicationDelay / waitTime) : 72000 (ticks / =1hour)`
+- `under limit(radiusOnUse / radiusPerTick / radius) : 1`
+- `upper limit(radiusOnUse / radiusPerTick / radius) : 100`
+- `under limit(color) : 0`
+- `upper limit(color) : 255`  
+  
+`Unique random : OK`  
+- `particle` セクションで解説
+
+---
+
+正規表現 : `splash_potion_detail=(predicate=(true|false);)?item:[a-zA-Z_0-9]+(;cloudfy;[a-zA-Z_0-9:\[\];]+)?`
+
+---
+
+効果 : 対象となるエンティティが ThrownPotion (投げられたポーション瓶)である場合、対象の各種パラメータを設定する。  
+
+## item (必須)
+この項目ではレシピファイルの `define` セクションで定義されたポーションから効果などをコピーして使用するため、 `item` にはポーション効果のコピー元となるアイテム名を記載してください。  
+
+## cloudy (任意)  
+`cloudy` を記載すると、投げられたポーション瓶がスポナーによって生成されたときに、スポナーの周囲にエリアエフェクトクラウド(以下 `AEC` )を召喚します。  
+`cloudy` を記載した場合は以下のセクションのいずれか 1 つ以上を設定してください。(`Alias` に記載された短い文字列によって指定することもできます。)  
+  
+また、以下のセクションのうち `duration`, `durationOnUse`, `reapplicationDelay`, `waitTime` に設定する数値には小数点を含めてはいけません。  
+逆に `radiusOnUse`, `radiusPerTick`, `radius` に設定する数値には小数点を含めなければなりません。  
+
+## duration (任意)
+- Alias: `d`    
+  
+`duration` では AEC の寿命を設定します。  
+-1 を設定するとコマンドで消去しない限り永遠に残ります。  
+
+## durationOnUse (任意)
+- Alias: `dou`
+
+`durationOnUse` では AEC がエンティティに対して効果を付与するたびに減少する寿命の量を設定します。  
+例として 10 を設定すると、 AEC  がエンティティに効果を付与する度に AEC 自体の寿命が 10 ticks 減少します。  
+
+## reapplicationDelay (任意)
+- Alias: `rd`
+
+`reapplicationDelay` では AEC がエンティティに効果を付与した後に、再度効果を付与するまでの間隔を設定します。  
+設定した間隔内であればエンティティが AEC に触れても効果が再度付与されることはありません。  
+
+## waitTime (任意)
+- Alias: `wt`
+
+`waitTime` では、 エンティティが AEC から効果を付与されるまでに AEC に触れていなければいけない時間を設定します。  
+例として 20 を設定すると、 エンティティは 20 ticks (= 1 秒)の間 AEC に触れなければ効果を獲得することができません。  
+
+## radiusOnUse (任意)
+- Alias: `rou`  
+  
+`radiusOnUse` では、 AEC がエンティティに効果を付与したときに減少する効果範囲を設定します。  
+`radiusOnuse:1.0` とすると、 AEC がエンティティに効果を付与するたびに AEC の効果範囲が 1.0 ブロックずつ減少します。  
+
+## radiusPerTick
+- Alias: `rpt`  
+  
+`radiusPerTick` では、 1 tick ごとに縮小していく AEC の効果範囲を指定します。  
+`radiusPerTick:0.5` とすると、 1 tick ごとに AEC の効果範囲が 0.5 ブロックずつ減少していきます。  
+
+## radius (任意)
+- Alias: `r`
+
+`radius` では、 AEC がスポーンした瞬間の効果範囲を設定します。  
+`radius:10.0` とすると、AEC の初期効果範囲が 10 ブロックに設定されます。  
+
+## particle (任意)
+- Alias: `p`
+
+AEC のパーティクルの種類を設定します。  
+設定可能な値を以下に示します。  
+
+<details><summary>Particles</summary>
+
+- AMBIENT_ENTITY_EFFECT: アンビエントエンティティエフェクト
+- ANGRY_VILLAGER: 怒った村人
+- BARRIER: バリア
+- BLOCK_MARKER: ブロックマーカー
+- BUBBLE: 泡
+- CLOUD: 雲
+- CRIT: クリティカルヒット
+- DAMAGE_INDICATOR: ダメージインジケーター
+- DOLPHIN: イルカ
+- DRAGON_BREATH: ドラゴンブレス
+- DRIPPING_HONEY: 滴るハチミツ
+- DRIPPING_LAVA: 滴る溶岩
+- DRIPPING_OBSIDIAN_TEAR: 滴る黒曜石の涙
+- DRIPPING_WATER: 滴る水
+- DUST_COLOR_TRANSITION: ダストカラー遷移
+- ELDER_GUARDIAN: エルダーガーディアン
+- ENCHANT: エンチャント
+- ENCHANTED_HIT: エンチャントされたヒット
+- END_ROD: エンドロッド
+- ENTITY_EFFECT: エンティティエフェクト
+- EXPLOSION: 爆発
+- FALLING_HONEY: 落ちるハチミツ
+- FALLING_LAVA: 落ちる溶岩
+- FALLING_OBSIDIAN_TEAR: 落ちる黒曜石の涙
+- FALLING_WATER: 落ちる水
+- FIREWORKS_SPARK: 花火の火花
+- FLAME: 炎
+- FLASH: フラッシュ
+- HAPPY_VILLAGER: 幸せな村人
+- HEART: ハート
+- INSTANT_EFFECT: 即効エフェクト
+- ITEM_CRACK: アイテムクラッシュ
+- LANDING_HONEY: 着地するハチミツ
+- LANDING_LAVA: 着地する溶岩
+- LANDING_OBSIDIAN_TEAR: 着地する黒曜石の涙
+- LARGE_SMOKE: 大きな煙
+- LAVA: 溶岩
+- MYCELIUM: 菌糸
+- NOTE: 音符
+- POOF: 
+- PORTAL: ポータルに吸い込まれるパーティクル
+- REDSTONE: レッドストーン
+- REVERSE_PORTAL: ポータルから出てくるパーティクル
+- SCRAPE: こすれる
+- SMOKE: 煙
+- SNEEZE: くしゃみ
+- SNOWFLAKE: 雪の結晶
+- SONIC_BOOM: ソニックブーム
+- SOUL: ソウルサンドのパーティクル
+- SPIT: (ラマの)唾
+- SWEEP_ATTACK: 一掃攻撃
+- TOTEM_OF_UNDYING: 不死のトーテム
+- VIBRATION: 振動
+- WARPED_SPORE: ワープした胞子
+- WAX_OFF: 銅系ブロックからワックスを剥がしたときのパーティクル
+- WAX_ON: 銅系ブロックにワックスしたときのパーティクル
+- WHITE_ASH: 白い灰
+
+</details>  
+  
+ランダム構文では上記のキーに加えて `all` を使用することができます。  
+各要素を否定(除く)ときはプレフィックスとして `!` をつけてください。  
+
+例  
+```yaml
+- type: entity_define
+  value: "name:self,actions:type=potion,splash_potion_detail=item:p;cloudy;particle:random[all]"
+
+define:
+  - name: [p]
+    base: [potion]
+    value:
+      - "type: potion_effect, value: random[all,!self]->[a=100,d=100]"
+  
+```
+
+## color (任意)
+- Alias: `c`
+
+`color` では AEC の色を設定します。  
+色の名前、もしくは RGB の各要素を `R-G-B` のように分割して指定します。  
+RGB で指定する場合には各要素にランダム構文を使用することができます。  
 
 </details>
 
