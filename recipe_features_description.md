@@ -1,10 +1,21 @@
 # アイテム装飾ガイド
 このドキュメントは Custom Crafter のレシピの成果物に装飾を施す際に要求されるコンフィグの書き方について解説しています。  
+
+---
+
+## 基本事項
+- システムが不正なコンフィグを検知した際にはエラーメッセージをサーバーコンソールに発信し、そのコンフィグで指定されている操作を行わずに次のコンフィグの解析に移行します。  
   
-システムが不正なコンフィグを検知した際にはエラーメッセージをサーバーコンソールに発信し、そのコンフィグで指定されている操作を行わずに次のコンフィグの解析に移行します。  
+- このセクションでは  
+```yaml
+- type: 操作のタイプ
+  value: 設定内容
+```
+のフォーマットに従って記述してください。  
+操作のタイプには、それぞれの小見出しの文字列がそのまま入ります。
   
-基本的にすべての装飾セクションにおいて、プレースホルダを用いたコンテナデータの挿入や数値計算をサポートしています。  
-また、`random : OK` と記載されている箇所では数値 (またはその処理固有の値) のランダム構文をサポートしています。  
+- 基本的にすべての装飾セクションにおいて、プレースホルダを用いたコンテナデータの挿入や数値計算をサポートしています。  
+  また、`random : OK` と記載されている箇所では数値 (またはその処理固有の値) のランダム構文をサポートしています。  
 <details><summary>数値のランダム構文</summary>
 
 ## 数値のランダム構文
@@ -93,14 +104,14 @@
 ---
 
 - `player data: OK`
-
-正規表現 : `type: lore, value: .+`
+  
+正規表現 : `value: .+`
 
 ---
 
 `value: ` の後ろに説明文を記載してください。
 
-e.g `type: lore, value: This is a pen.`
+e.g `value: This is a pen.`
 
 </details>
 
@@ -120,9 +131,9 @@ e.g `type: lore, value: This is a pen.`
 
 --- 
 
-正規表現(enchant) : `type: enchant, value: type=(enchant|level),action=([a-zA-Z_\\[\\](),!]+)->(.+)`
+正規表現(enchant) : `value: type=(enchant|level),action=([a-zA-Z_\\[\\](),!]+)->(.+)`
 
-正規表現(enchant_book) : `type: enchant_book, value: type=(enchant|level),action=([a-zA-Z_\\[\\](),!]+)->(.+)`
+正規表現(enchant_book) : `value: type=(enchant|level),action=([a-zA-Z_\\[\\](),!]+)->(.+)`
 
 ---
 
@@ -134,7 +145,7 @@ enchant と enchant_book は同じ構文を使用するため、このセクシ�
   
 `->` の後ろには、`type=enchant` であればエンチャント(ランダム構文でも可)、もしくは `None` を、`type=level` であれば変更後のエンチャントレベルを記載してください。  
   
-e.g `type: enchant, value: type=enchant,action=random[()]`  
+e.g `value: type=enchant,action=random[()]`  
 
 ## エンチャントのランダム構文
 このセクションでは、エンチャントを指定された要素の中からランダムに決定する構文の解説を行います。
@@ -174,7 +185,7 @@ e.g. `random[all,!self]` : 全てのエンチャントから現在含んでい�
 
 - `player data : OK`
 
-正規表現 : `type: potion_color_rgb, value: red=([0-9]+),green=([0-9]+),blue=([0-9]+)`
+正規表現 : `value: red=([0-9]+),green=([0-9]+),blue=([0-9]+)`
 
 ---
 
@@ -191,7 +202,7 @@ e.g. `random[all,!self]` : 全てのエンチャントから現在含んでい�
 
 - `player data : OK`
 
-正規表現 : `type: potion_color_name, value: [a-z]+`
+正規表現 : `value: [a-z]+`
 
 ---
 
@@ -223,7 +234,7 @@ e.g. `random[all,!self]` : 全てのエンチャントから現在含んでい�
 
 - `player data : OK`
 
-正規表現 : `type: texture_id, value: [0-9]+`
+正規表現 : `value: [0-9]+`
 
 </details>
 
@@ -236,7 +247,7 @@ e.g. `random[all,!self]` : 全てのエンチャントから現在含んでい�
 
 - `player data : OK`
 
-正規表現 : `type: tool_durability_percentage, value: ([0-9]*)\\.?([0-9]+)`
+正規表現 : `value: ([0-9]*)\\.?([0-9]+)`
 
 ---
 
@@ -253,7 +264,7 @@ e.g. `random[all,!self]` : 全てのエンチャントから現在含んでい�
 
 - `player data : OK`
 
-正規表現 : `type: tool_durability_real, value: [0-9]+`
+正規表現 : `value: [0-9]+`
 
 ---
 
@@ -270,7 +281,7 @@ e.g. `random[all,!self]` : 全てのエンチャントから現在含んでい�
 
 - `player data : OK`
 
-正規表現 : `type: item_name, value: .+`
+正規表現 : `value: .+`
 
 ---
 
@@ -287,7 +298,7 @@ e.g. `random[all,!self]` : 全てのエンチャントから現在含んでい�
 
 - `player data : OK`
 
-正規表現 : `type: attribute_modifier, value: attribute=([a-zA-Z_]+),op=(?i)(add_number|add_scalar|multiply_scalar_1),value=(-?[0-9]*\\.?[0-9]+)`
+正規表現 : `value: attribute=([a-zA-Z_]+),op=(?i)(add_number|add_scalar|multiply_scalar_1),value=(-?[0-9]*\\.?[0-9]+)`
 
 ---
 
@@ -304,7 +315,7 @@ e.g. `random[all,!self]` : 全てのエンチャントから現在含んでい�
 
 - `player data : OK`
 
-正規表現 : `type: attribute_modifier_equipment, value: attribute=([a-zA-Z_]+),op=(?i)(add_number|add_scalar|multiply_scalar_1),value=(-?[0-9]*\\.?[0-9]+),slot=([a-zA-Z_]+)`
+正規表現 : `value: attribute=([a-zA-Z_]+),op=(?i)(add_number|add_scalar|multiply_scalar_1),value=(-?[0-9]*\\.?[0-9]+),slot=([a-zA-Z_]+)`
 
 ---
 
@@ -329,7 +340,7 @@ slot には
 
 - `player data : OK`
 
-正規表現 : `type: item_flag, value: flag=([a-zA-Z_]+),action=(?i)(clear|remove|add)`
+正規表現 : `value: flag=([a-zA-Z_]+),action=(?i)(clear|remove|add)`
 
 ---
 
@@ -356,7 +367,7 @@ slot には
 
 - `player data : OK`
 
-正規表現 : `type: unbreakable, value: (true|false)`
+正規表現 : `value: (true|false)`
 
 </details>
 
@@ -376,8 +387,7 @@ slot には
   - `random under(duration): 1`
   - `random upper(duration): 2147483647`
 
-正規表現(potion_effect) : `type: potion_effect, value: ([a-zA-Z\\[\\]!,0-9=_]+)->(.+)` 
-正規表現(stew) : `type: stew, value: ([a-zA-Z\\[\\]!,0-9=_]+)->(.+)`
+正規表現(potion_effect / stew 共通) : `value: ([a-zA-Z\\[\\]!,0-9=_]+)->(.+)` 
 
 ---
 
@@ -385,9 +395,9 @@ potion_effect と stew は同じ構文を使用するため、このセクショ
 
 これらの記載例は以下のようになります。
 
-e.g. `type: potion_effect, value: slowness->speed:[amplifier=10,duration=-1]` (鈍足の効果を移動速度上昇に変更し、効果レベルを 10 に、効果時間を無限に設定します。)
+e.g. (potion_effect) `value: slowness->speed:[amplifier=10,duration=-1]` (鈍足の効果を移動速度上昇に変更し、効果レベルを 10 に、効果時間を無限に設定します。)
 
-e.g. `type: stew, value: random[self]->random[all,!self]:[a=10,d=200,ambient,!icon,!particles]` (現在保持しているポーション効果の中から1つランダムに選んだものを、全ての効果の中から現在保持している効果を除いたもののうちランダムに選んだ1つの効果に変更します。そして、効果レベルを 10 に、効果時間を 200 秒、 ambient, アイコン非表示, パーティクル非表示に設定します。)
+e.g. (stew) `value: random[self]->random[all,!self]:[a=10,d=200,ambient,!icon,!particles]` (現在保持しているポーション効果の中から1つランダムに選んだものを、全ての効果の中から現在保持している効果を除いたもののうちランダムに選んだ1つの効果に変更します。そして、効果レベルを 10 に、効果時間を 200 秒、 ambient, アイコン非表示, パーティクル非表示に設定します。)
 
 上記の例より、基本的な構文が `変更前のポーション効果->変更後のポーション効果:[amplifier=効果レベル,duration=効果時間]` であることが分かると思います。また、各所にランダム構文が使用できることも。
 
@@ -410,7 +420,7 @@ e.g. `type: stew, value: random[self]->random[all,!self]:[a=10,d=200,ambient,!ic
 
 ---
 
-`type: stew, value: random[all,!self]->[a=100,d=-1]` のように `変更前のポーション効果->変更後のポーション効果:[amplifier=効果レベル,duration=効果時間]`  の構文から外れたものでも有効なコンフィグとして認識されます。
+`value: random[all,!self]->[a=100,d=-1]` のように `変更前のポーション効果->変更後のポーション効果:[amplifier=効果レベル,duration=効果時間]`  の構文から外れたものでも有効なコンフィグとして認識されます。
 これは、ポーション効果を新規に追加する際の書き方です。これらは
 `追加するポーション効果->[amplifier=効果レベル,duration=効果時間]` として表されます。
 
@@ -436,9 +446,9 @@ e.g. `type: stew, value: random[self]->random[all,!self]:[a=10,d=200,ambient,!ic
 ---
 
 正規表現 : 
-- `type: leather_armor_color, value: r=([0-9]+),g=([0-9]+),b=([0-9]+)` : 色を RGB で指定する場合
-- `type: leather_armor_color, value: ([a-zA-Z_]+)` : 色を色名で指定する場合
-- `type: leather_armor_color, value: (?i)random` : ランダムな色を指定する場合
+- `value: r=([0-9]+),g=([0-9]+),b=([0-9]+)` : 色を RGB で指定する場合
+- `value: ([a-zA-Z_]+)` : 色を色名で指定する場合
+- `value: (?i)random` : ランダムな色を指定する場合
 
 ---
 
@@ -457,7 +467,7 @@ e.g. `type: stew, value: random[self]->random[all,!self]:[a=10,d=200,ambient,!ic
 
 ---
 
-正規表現 : `type: book, value: type=(author|title|add_page|add_long|from_file|gen),element=.+`
+正規表現 : `value: type=(author|title|add_page|add_long|from_file|gen),element=.+`
 
 ---
 
@@ -499,7 +509,7 @@ e.g. `type: stew, value: random[self]->random[all,!self]:[a=10,d=200,ambient,!ic
 
 ---
 
-正規表現 : `type: head, value: type=(name|url),value=.+`
+正規表現 : `value: type=(name|url),value=.+`
 
 ---
 
@@ -526,7 +536,7 @@ e.g. `type: stew, value: random[self]->random[all,!self]:[a=10,d=200,ambient,!ic
 
 ---
 
-正規表現 : `type: lore_modify, value: type=(clear|modify)(,value=type=(remove|insert),line=([0-9]+)(,value=(.+))*)?`
+正規表現 : `value: type=(clear|modify)(,value=type=(remove|insert),line=([0-9]+)(,value=(.+))*)?`
 
 ---
 
@@ -559,7 +569,7 @@ e.g. `type: stew, value: random[self]->random[all,!self]:[a=10,d=200,ambient,!ic
 
 ---
 
-正規表現 : `type: attribute_modifier_modify, value: type=(clear|remove|modify)(,attribute=([a-zA-Z_]+)(,value=(.+))?)?`
+正規表現 : `value: type=(clear|remove|modify)(,attribute=([a-zA-Z_]+)(,value=(.+))?)?`
 
 ---
 
@@ -581,7 +591,7 @@ e.g. `type: stew, value: random[self]->random[all,!self]:[a=10,d=200,ambient,!ic
 
 ---
 
-正規表現 : `type: result_value_sync`
+正規表現 : ``
 
 **この機能は値を必要としません。**
 
@@ -598,7 +608,7 @@ e.g. `type: stew, value: random[self]->random[all,!self]:[a=10,d=200,ambient,!ic
 
 ---
 
-正規表現 : `type: container, value: type=(add|remove|modify),target=([a-zA-Z0-9_.%$]*)(,value=(.+))?`
+正規表現 : `value: type=(add|remove|modify),target=([a-zA-Z0-9_.%$]*)(,value=(.+))?`
 
 ---
 
@@ -630,7 +640,7 @@ e.g. `type: stew, value: random[self]->random[all,!self]:[a=10,d=200,ambient,!ic
 
 ---
 
- 正規表現 : `type: material, value: [a-zA-Z_]+`
+ 正規表現 : `value: [a-zA-Z_]+`
 
 </details>
 <details><summary>amount</summary>
@@ -644,7 +654,7 @@ e.g. `type: stew, value: random[self]->random[all,!self]:[a=10,d=200,ambient,!ic
 
 ---
 
-正規表現 : `type: amount, value: [0-9]+`
+正規表現 : `value: [0-9]+`
 
 </details>
 <details><summary>run_command_as_console</summary>
@@ -658,7 +668,7 @@ e.g. `type: stew, value: random[self]->random[all,!self]:[a=10,d=200,ambient,!ic
 
 ---
 
-正規表現 : `type: run_command_as_console, value: .+`
+正規表現 : `value: .+`
 
 ---
 
@@ -676,7 +686,7 @@ e.g. `type: stew, value: random[self]->random[all,!self]:[a=10,d=200,ambient,!ic
 
 ---
 
-正規表現 : `type: run_command_as_player, value: .+`
+正規表現 : `value: .+`
 
 ---
 
@@ -699,7 +709,7 @@ e.g. `type: stew, value: random[self]->random[all,!self]:[a=10,d=200,ambient,!ic
 
 ---
 
-正規表現 : `type: set_storage_item, value: name=([a-zA-Z0-9]+)(,amount=[0-9]+)?(,times=[0-9]+)?`
+正規表現 : `value: name=([a-zA-Z0-9]+)(,amount=[0-9]+)?(,times=[0-9]+)?`
 
 ---
 
@@ -720,7 +730,7 @@ e.g. `type: stew, value: random[self]->random[all,!self]:[a=10,d=200,ambient,!ic
 
 ---
 
-正規表現 : `type: can_destroy, value: [a-zA-Z0-9_,]+`
+正規表現 : `value: [a-zA-Z0-9_,]+`
 
 ---
 
@@ -738,7 +748,7 @@ e.g. `type: stew, value: random[self]->random[all,!self]:[a=10,d=200,ambient,!ic
 
 ---
 
-正規表現 : `type: repair_cost, value: [0-9]+`
+正規表現 : `value: [0-9]+`
 
 </details>
 <details><summary>firework</summary>
@@ -757,7 +767,7 @@ e.g. `type: stew, value: random[self]->random[all,!self]:[a=10,d=200,ambient,!ic
 
 ---
 
-正規表現 : `type: firework, value: .+`
+正規表現 : `value: .+`
 
 ---
 
@@ -826,7 +836,7 @@ e.g. `power=random[10:30]` (威力を 10 ~ 30 の範囲のランダムな値に�
 
 ---
 
-正規表現 : `type: tropical_fish, value: body_color=([a-zA-Z\[\]!,]+),pattern=([a-zA-Z\[\]!_,]+),pattern_color=([a-zA-Z\[\]!_,]+)`
+正規表現 : `value: body_color=([a-zA-Z\[\]!,]+),pattern=([a-zA-Z\[\]!_,]+),pattern_color=([a-zA-Z\[\]!_,]+)`
 
 ---
 
@@ -895,7 +905,7 @@ e.g. `power=random[10:30]` (威力を 10 ~ 30 の範囲のランダムな値に�
 
 ---
 
-正規表現 : `name:([a-zA-Z_0-9]+),actions:type=[A-Z_0-9]+`  
+正規表現 : `value: name:([a-zA-Z_0-9]+),actions:type=[A-Z_0-9]+`  
 
 ---
 
