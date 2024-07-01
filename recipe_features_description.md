@@ -591,7 +591,7 @@ e.g. (stew) `value: random[self]->random[all,!self]:[a=10,d=200,ambient,!icon,!p
 
 ---
 
-正規表現 : ``
+正規表現 : 
 
 **この機能は値を必要としません。**
 
@@ -695,8 +695,52 @@ e.g. (stew) `value: random[self]->random[all,!self]:[a=10,d=200,ambient,!icon,!p
 </details>
 <details><summary>item_define</summary>
 
-# item_define
+# item_define  
+効果 : レシピファイルの `define` セクションに記載した内容のアイテムを様々なセクションから呼び出せるようにする。  
 
+---
+
+使用可能なデータなし(`item_define` 本体)  
+
+- `player data : OK` (`define` 内のみ)
+- `random : OK` (対応している処理の `value: ` のみ)
+
+---
+
+正規表現 : 
+(`value: ` 不要)  
+  
+設定テンプレート  
+```yaml
+container
+  - type: item_define
+
+define
+  - name: [定義するアイテムの名前]
+    base: 定義するアイテムの元となるアイテムの ID (例: STONE)
+    value: - type: 定義するアイテムに施す処理のタイプ名, value: 処理の中身
+```
+
+
+設定例  
+```yaml
+container
+  - type: item_define
+
+define
+  - name: [enchanted_stone]
+    base: [STONE]
+    value:
+      - type: enchant, value: type=enchant,action=sharpness->3
+```
+-> `enchanted_stone` という名前でダメージ増加レベル 3 の石を定義  
+
+## 注意点
+- `name` と `base` は角括弧で囲う必要があります。
+- 1 つのレシピファイル内で複数のアイテムを同じ名前で定義した場合、それらの中で最後に定義したアイテムだけが保持されます。
+- `value` を記載する場合はリストで記載する必要があります。
+- `value: ` 以下には `type: 操作の種類, value: 操作内容` のフォーマットで記載する必要があります。
+  
 </details>
 <details><summary>set_storage_item</summary>
 
