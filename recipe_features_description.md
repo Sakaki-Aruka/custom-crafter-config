@@ -717,7 +717,7 @@ container
 
 define
   - name: [定義するアイテムの名前]
-    base: 定義するアイテムの元となるアイテムの ID (例: STONE)
+    base: [定義するアイテムの元となるアイテムの ID] (例: [STONE])
     value: - type: 定義するアイテムに施す処理のタイプ名, value: 処理の中身
 ```
 
