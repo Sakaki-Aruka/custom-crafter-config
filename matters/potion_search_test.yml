@@ -1,9 +1,0 @@
-name: potion_search_test
-mass: false
-amount: 1
-candidate: [splash_potion]
-bottleTypeMatch: true
-potion: 
-  - speed,200,50,strict
-  - luck,200,50,strict
-  - jump,100,50,strict 

@@ -1,6 +1,0 @@
-name: RR1
-tag: amorphous
-result: first
-coordinate: [second,second,second,first]
-returns:
-  - cobblestone,dirt,2

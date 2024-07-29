@@ -1,7 +1,0 @@
-name: R2
-tag: normal
-result: first
-coordinate:
-  - first,second,first
-  - null,second,null
-  - first,second,first

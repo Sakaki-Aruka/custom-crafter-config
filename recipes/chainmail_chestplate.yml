@@ -1,7 +1,0 @@
-name: chainmail_chestplate
-tag: normal
-result: chainmail_chestplate
-coordinate:
-  - chain,null,chain
-  - chain,chain,chain
-  - chain,chain,chain

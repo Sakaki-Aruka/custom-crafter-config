@@ -1,5 +1,0 @@
-name: water_bucket
-amount: 1
-mass: false
-candidate: ["water_bucket"]
-matchPoint: -1

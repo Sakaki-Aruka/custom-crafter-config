@@ -1,7 +1,0 @@
-name: luck_enchanted_book
-mass: false
-amount: 1
-candidate: [enchanted_book]
-matchPoint: -1
-enchant: 
- - luck,1,strict

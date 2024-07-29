@@ -1,8 +1,0 @@
-name: potion
-mass: false
-amount: 1
-candidate: [obsidian]
-matchPoint: -1
-bottleTypeMatch: true
-potion:
-  - poison,400,5,strict

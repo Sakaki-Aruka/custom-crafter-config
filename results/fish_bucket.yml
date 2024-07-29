@@ -1,4 +1,0 @@
-name: fish_bucket
-amount: 1
-nameOrRegex: "^(COD|SALMON|PUFFERFISH|TROPICAL_FISH)$@{R}_BUCKET"
-matchPoint: 1

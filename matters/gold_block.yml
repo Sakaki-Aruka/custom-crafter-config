@@ -1,5 +1,0 @@
-name: gold_block
-mass: false
-amount: 1
-candidate: [gold_block]
-matchPoint: -1
