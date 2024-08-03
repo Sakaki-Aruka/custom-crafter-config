@@ -46,16 +46,22 @@ recipes:
   - plugins/Custom_Crafter/recipes1
   - plugins/Custom_Crafter/recipes2
 ```
-
-# BaseBlock
-基礎ブロックの設定ファイルには1種類のブロックのアイテムIDのみを記述する必要があります。  
-アイテムIDについては[Material (Spigot API JavaDoc)](https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html) をご覧ください。  
-セクション名は `material` です。  
-
-例) 
+  
+## auto
+このセクションに書いたパスの直下に配置されているファイルは、matter, result, recipe のうちどれであるかに関わらず読み込まれます。  
+ただし、それらのファイルに `type` セクションを記述していない場合は読み込まれません。  
+`type` セクションには `matter`, `result`, `recipe` のいずれか適切なものを書いてください。  
+  
+このセクションは、リスト形式で書かれている必要があります。  
+例)  
 ```yaml
-material: gold_block
+auto:
+  - plugins/Custom_Crafter/summer-events-recipes
+  - plugins/Custom_Crafter/autumn-events-recipes
+  - plugins/Custom_Crafter/winter-events-recipes
+  - plugins/Custom_Crafter/spring-events-recipes
 ```
+
 
 # Matters
 素材の設定ファイルには、必ず記載しなくてはならない項目が4つとオプション設定が2つ存在します。  
